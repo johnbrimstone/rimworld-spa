@@ -1,0 +1,17 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+
+# Compiled mod assemblies (rebuilt by the C# project, not hand-authored)
+1.6/Assemblies/*.dll
+1.6/Assemblies/*.pdb
+
+# OS cruft
+Thumbs.db
+.DS_Store

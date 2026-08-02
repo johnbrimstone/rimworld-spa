@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    ThoughtStage has no severity-multiplier field (unlike HediffStage's
+    multiplyStatChangesBySeverity, used for the stat side in HediffDefs_Sauna.xml), so
+    Mood scaling with intensity is done via discrete stages instead — one per actually
+    reachable severity value. Facility-bonus points sum to only 0,2,3,4,5,6,7,8,9,10
+    (facilityBonus values are 2/2/2/3/3/3/4, so a sum of exactly 1 is never reachable),
+    giving intensity multipliers of 1.00,1.10,1.15,1.20,1.25,1.30,1.35,1.40,1.45,1.50 and
+    mood = 6.0 * that multiplier = 6.0,6.6,6.9,7.2,7.5,7.8,8.1,8.4,8.7,9.0. Identical
+    across all 7 archetypes since every archetype's base Mood is +6.
+  -->
+
+  <ThoughtDef>
+    <defName>Sauna_SerenityMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_Serenity</hediff>
+    <stages>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>6.0</baseMoodEffect></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>6.6</baseMoodEffect><minSeverity>1.10</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>6.9</baseMoodEffect><minSeverity>1.15</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>7.2</baseMoodEffect><minSeverity>1.20</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>7.5</baseMoodEffect><minSeverity>1.25</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>7.8</baseMoodEffect><minSeverity>1.30</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>8.1</baseMoodEffect><minSeverity>1.35</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>8.4</baseMoodEffect><minSeverity>1.40</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>8.7</baseMoodEffect><minSeverity>1.45</minSeverity></li>
+      <li><label>serenity</label><description>I feel calm after relaxing in the sauna.</description><baseMoodEffect>9.0</baseMoodEffect><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_DetoxifiedMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_Detoxified</hediff>
+    <stages>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>6.0</baseMoodEffect></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>6.6</baseMoodEffect><minSeverity>1.10</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>6.9</baseMoodEffect><minSeverity>1.15</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>7.2</baseMoodEffect><minSeverity>1.20</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>7.5</baseMoodEffect><minSeverity>1.25</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>7.8</baseMoodEffect><minSeverity>1.30</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>8.1</baseMoodEffect><minSeverity>1.35</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>8.4</baseMoodEffect><minSeverity>1.40</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>8.7</baseMoodEffect><minSeverity>1.45</minSeverity></li>
+      <li><label>detoxified</label><description>I feel cleansed after sweating it out in the sauna.</description><baseMoodEffect>9.0</baseMoodEffect><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_PurifiedMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_Purified</hediff>
+    <stages>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>6.0</baseMoodEffect></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>6.6</baseMoodEffect><minSeverity>1.10</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>6.9</baseMoodEffect><minSeverity>1.15</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>7.2</baseMoodEffect><minSeverity>1.20</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>7.5</baseMoodEffect><minSeverity>1.25</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>7.8</baseMoodEffect><minSeverity>1.30</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>8.1</baseMoodEffect><minSeverity>1.35</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>8.4</baseMoodEffect><minSeverity>1.40</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>8.7</baseMoodEffect><minSeverity>1.45</minSeverity></li>
+      <li><label>purified</label><description>I feel purified after the warm stone heat of the sauna.</description><baseMoodEffect>9.0</baseMoodEffect><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_RadiantMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_Radiant</hediff>
+    <stages>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>6.0</baseMoodEffect></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>6.6</baseMoodEffect><minSeverity>1.10</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>6.9</baseMoodEffect><minSeverity>1.15</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>7.2</baseMoodEffect><minSeverity>1.20</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>7.5</baseMoodEffect><minSeverity>1.25</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>7.8</baseMoodEffect><minSeverity>1.30</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>8.1</baseMoodEffect><minSeverity>1.35</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>8.4</baseMoodEffect><minSeverity>1.40</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>8.7</baseMoodEffect><minSeverity>1.45</minSeverity></li>
+      <li><label>radiant</label><description>I feel radiant after relaxing in the scenic sauna.</description><baseMoodEffect>9.0</baseMoodEffect><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_RejuvenatedMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_Rejuvenated</hediff>
+    <stages>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>6.0</baseMoodEffect></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>6.6</baseMoodEffect><minSeverity>1.10</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>6.9</baseMoodEffect><minSeverity>1.15</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>7.2</baseMoodEffect><minSeverity>1.20</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>7.5</baseMoodEffect><minSeverity>1.25</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>7.8</baseMoodEffect><minSeverity>1.30</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>8.1</baseMoodEffect><minSeverity>1.35</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>8.4</baseMoodEffect><minSeverity>1.40</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>8.7</baseMoodEffect><minSeverity>1.45</minSeverity></li>
+      <li><label>rejuvenated</label><description>I feel rejuvenated after the candlelit ambience of the sauna.</description><baseMoodEffect>9.0</baseMoodEffect><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_InvigoratedMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_Invigorated</hediff>
+    <stages>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>6.0</baseMoodEffect></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>6.6</baseMoodEffect><minSeverity>1.10</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>6.9</baseMoodEffect><minSeverity>1.15</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>7.2</baseMoodEffect><minSeverity>1.20</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>7.5</baseMoodEffect><minSeverity>1.25</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>7.8</baseMoodEffect><minSeverity>1.30</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>8.1</baseMoodEffect><minSeverity>1.35</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>8.4</baseMoodEffect><minSeverity>1.40</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>8.7</baseMoodEffect><minSeverity>1.45</minSeverity></li>
+      <li><label>invigorated</label><description>I feel invigorated after the steam infusion of the sauna.</description><baseMoodEffect>9.0</baseMoodEffect><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_CleansedMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_Cleansed</hediff>
+    <stages>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>6.0</baseMoodEffect></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>6.6</baseMoodEffect><minSeverity>1.10</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>6.9</baseMoodEffect><minSeverity>1.15</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>7.2</baseMoodEffect><minSeverity>1.20</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>7.5</baseMoodEffect><minSeverity>1.25</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>7.8</baseMoodEffect><minSeverity>1.30</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>8.1</baseMoodEffect><minSeverity>1.35</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>8.4</baseMoodEffect><minSeverity>1.40</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>8.7</baseMoodEffect><minSeverity>1.45</minSeverity></li>
+      <li><label>cleansed</label><description>I feel cleansed after the wet steam of the sauna.</description><baseMoodEffect>9.0</baseMoodEffect><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

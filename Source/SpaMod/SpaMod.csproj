@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>SpaMod</RootNamespace>
+    <AssemblyName>SpaMod</AssemblyName>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>disable</Nullable>
+    <NoWarn>CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Reference-only assemblies for the exact installed RimWorld version; never copied into the output. -->
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" />
+    <PackageReference Include="Lib.Harmony.Ref" Version="2.4.2" />
+  </ItemGroup>
+
+  <!-- Drop the compiled assembly straight into the mod's 1.6/Assemblies folder for in-game testing. -->
+  <Target Name="CopyToModAssemblies" AfterTargets="Build">
+    <ItemGroup>
+      <ModOutputFiles Include="$(OutputPath)$(AssemblyName).dll" />
+      <ModOutputFiles Include="$(OutputPath)$(AssemblyName).pdb" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModOutputFiles)" DestinationFolder="$(MSBuildProjectDirectory)\..\..\1.6\Assemblies" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Two new recreation categories for the sauna's non-Serenity archetypes (Serenity
+    keeps vanilla's own Meditative). Neither exists in vanilla or any official DLC —
+    "Hydrotherapy" is a name shared with the (unrelated, non-dependency) Dubs Bad
+    Hygiene mod's own joy kind for its hot tub/sauna, not a reused vanilla def.
+    Deliberately no restrictions (no titleRequiredAny) — see the design spec's
+    "Recreation Type (JoyKindDef) Mapping" section.
+  -->
+
+  <JoyKindDef>
+    <defName>Hydrotherapy</defName>
+    <label>hydrotherapy</label>
+  </JoyKindDef>
+
+  <JoyKindDef>
+    <defName>BathRelaxing</defName>
+    <label>bath relaxing</label>
+  </JoyKindDef>
+
+</Defs>

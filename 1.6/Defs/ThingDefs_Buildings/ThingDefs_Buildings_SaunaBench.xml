@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef>
+    <defName>SaunaBench</defName>
+    <label>sauna bench</label>
+    <description>A simple wooden bench for sitting in a sauna room.</description>
+    <thingClass>Building</thingClass>
+    <category>Building</category>
+    <selectable>true</selectable>
+    <!-- Placeholder art reusing the vanilla dining chair sprite until real textures are made. -->
+    <graphicData>
+      <texPath>Things/Building/Furniture/DiningChair</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <pathCost>30</pathCost>
+    <fillPercent>0.35</fillPercent>
+    <rotatable>true</rotatable>
+    <defaultPlacingRot>South</defaultPlacingRot>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <designationCategory>Furniture</designationCategory>
+    <statBases>
+      <Beauty>2</Beauty>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <WorkToBuild>800</WorkToBuild>
+      <Mass>5</Mass>
+      <Comfort>0.8</Comfort>
+    </statBases>
+    <costList>
+      <WoodLog>60</WoodLog>
+    </costList>
+    <building>
+      <isSittable>true</isSittable>
+    </building>
+  </ThingDef>
+
+</Defs>

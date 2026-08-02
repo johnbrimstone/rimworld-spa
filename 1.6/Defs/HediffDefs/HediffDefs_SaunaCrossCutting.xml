@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Cross-cutting / exclusive buffs (Phase 2) — granted by JobDriver_UseSauna.ApplyRoomBuff
+    alongside the archetype-specific buff from HediffDefs_Sauna.xml, not instead of it. All
+    require a full, uninterrupted 1-hour session, same as the archetype buffs.
+  -->
+
+  <!-- Every archetype, every full session. Intensity-scaled like the archetype buffs. -->
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_HeatNumbed</defName>
+    <label>heat-numbed</label>
+    <labelNoun>a heat-numbed feeling</labelNoun>
+    <description>Lingering desensitization from sauna heat. Raises the pain-shock threshold and comfortable maximum temperature while it lasts.</description>
+    <stages>
+      <li>
+        <multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity>
+        <statOffsets>
+          <PainShockThreshold>0.10</PainShockThreshold>
+          <ComfyTemperatureMax>8</ComfyTemperatureMax>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!-- Serenity-exclusive. painFactor is a raw HediffStage field, not a StatDef, so it
+       can't use multiplyStatChangesBySeverity — discrete stages instead, one per
+       reachable intensity value (same set used for Mood in ThoughtDefs_Sauna.xml):
+       painFactor = 1 - 0.10 * intensity. -->
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Vitality</defName>
+    <label>vitality</label>
+    <labelNoun>a sense of vitality</labelNoun>
+    <description>A lingering vitality from a meditation-brazier sauna. Dulls felt pain while it lasts.</description>
+    <stages>
+      <li><painFactor>0.900</painFactor></li>
+      <li><painFactor>0.890</painFactor><minSeverity>1.10</minSeverity></li>
+      <li><painFactor>0.885</painFactor><minSeverity>1.15</minSeverity></li>
+      <li><painFactor>0.880</painFactor><minSeverity>1.20</minSeverity></li>
+      <li><painFactor>0.875</painFactor><minSeverity>1.25</minSeverity></li>
+      <li><painFactor>0.870</painFactor><minSeverity>1.30</minSeverity></li>
+      <li><painFactor>0.865</painFactor><minSeverity>1.35</minSeverity></li>
+      <li><painFactor>0.860</painFactor><minSeverity>1.40</minSeverity></li>
+      <li><painFactor>0.855</painFactor><minSeverity>1.45</minSeverity></li>
+      <li><painFactor>0.850</painFactor><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+  <!-- Serenity-exclusive. GlobalLearningFactor is a real StatDef, so this one can use
+       multiplyStatChangesBySeverity normally (single stage). -->
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Clarity</defName>
+    <label>clarity</label>
+    <labelNoun>a sense of clarity</labelNoun>
+    <description>A lingering clarity from a meditation-brazier sauna. Improves learning speed while it lasts.</description>
+    <stages>
+      <li>
+        <multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity>
+        <statOffsets>
+          <GlobalLearningFactor>0.15</GlobalLearningFactor>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!-- Flat, not intensity-scaled. Mood comes from the matching ThoughtDef in
+       ThoughtDefs_SaunaCrossCutting.xml — no stat effects here, so no stage fields
+       needed beyond the default (severity irrelevant, just needs to stay > 0). -->
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_SaunaBonding</defName>
+    <label>sauna bonding</label>
+    <labelNoun>a bonding memory</labelNoun>
+    <description>A shared, relaxing sauna session with another colonist.</description>
+    <stages>
+      <li />
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_FreshAir</defName>
+    <label>fresh air</label>
+    <labelNoun>a breath of fresh air</labelNoun>
+    <description>A refreshed feeling from time spent in the sauna, easing the feeling of being stuck indoors.</description>
+    <stages>
+      <li />
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_EasedJoints</defName>
+    <label>eased joints</label>
+    <labelNoun>eased joints</labelNoun>
+    <description>Sauna heat has loosened stiff, aging joints, easing arthritis-like aches and pains.</description>
+    <stages>
+      <li />
+    </stages>
+  </HediffDef>
+
+  <!--
+    Deeply Relaxed: a separate, persistent system — gained (not overwritten) by +1 per
+    full session, or +2 if the room was fully decorated (3 linked facilities), capped
+    at 25 stacks, decaying -1/day regardless of sauna use (HediffCompProperties_SeverityPerDay),
+    with no reset. Severity itself IS the stack count (not an intensity multiplier), so it
+    does not inherit SaunaBuffBase — no Disappears comp (it never fully "expires" on a
+    timer, only decays via SeverityPerDay and vanishes once severity reaches 0, which is
+    default Hediff behavior). Each stack is worth a flat 1% MentalBreakThreshold reduction,
+    via the same multiplyStatChangesBySeverity trick used elsewhere, just applied to a
+    stack count instead of an intensity multiplier.
+  -->
+  <HediffDef>
+    <defName>Sauna_DeeplyRelaxed</defName>
+    <label>deeply relaxed</label>
+    <labelNoun>a deep relaxation</labelNoun>
+    <description>The cumulative effect of frequent sauna visits. Builds slowly, decays slowly, and never fully resets.</description>
+    <hediffClass>HediffWithComps</hediffClass>
+    <isBad>false</isBad>
+    <initialSeverity>0</initialSeverity>
+    <maxSeverity>25</maxSeverity>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-1</severityPerDay>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity>
+        <statOffsets>
+          <MentalBreakThreshold>-0.01</MentalBreakThreshold>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
+
+</Defs>

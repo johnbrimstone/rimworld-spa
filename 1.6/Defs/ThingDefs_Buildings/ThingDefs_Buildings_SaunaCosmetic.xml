@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Cosmetic-only buildings (Resolved Decision #10): pure beauty-stat objects, no
+    CompFacility, no facility linking, not counted toward the 3-facility cap, and no
+    mechanical enforcement of "placed outside the sauna room" — that's flavor/suggested
+    placement only, same as bench material/theme pairing elsewhere in this mod. No
+    research requirement either: the Costs section lists researchPrerequisites for
+    heaters explicitly but omits it for every item here, so these are available as soon
+    as the relevant resource is.
+  -->
+  <ThingDef Name="SaunaCosmeticBase" Abstract="True">
+    <thingClass>Building</thingClass>
+    <category>Building</category>
+    <selectable>true</selectable>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <rotatable>false</rotatable>
+    <designationCategory>Furniture</designationCategory>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaCosmeticBase">
+    <defName>SaunaTowelRack</defName>
+    <label>towel rack</label>
+    <description>A rack of folded towels for the changing area. Purely decorative.</description>
+    <!-- Placeholder art pending real textures (see spec's Asset Pipeline section). -->
+    <graphicData>
+      <texPath>Things/Item/Resource/Cloth</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <drawSize>(0.7, 0.7)</drawSize>
+    </graphicData>
+    <fillPercent>0.15</fillPercent>
+    <pathCost>14</pathCost>
+    <statBases>
+      <MaxHitPoints>60</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <WorkToBuild>150</WorkToBuild>
+      <Mass>2</Mass>
+      <Beauty>1</Beauty>
+    </statBases>
+    <costList>
+      <WoodLog>10</WoodLog>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaCosmeticBase">
+    <defName>SaunaRobeHook</defName>
+    <label>robe hook</label>
+    <description>A simple hook for hanging robes in the changing area. Purely decorative.</description>
+    <graphicData>
+      <texPath>Things/Item/Resource/WoodLog</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <drawSize>(0.5, 0.5)</drawSize>
+    </graphicData>
+    <fillPercent>0.1</fillPercent>
+    <pathCost>14</pathCost>
+    <statBases>
+      <MaxHitPoints>50</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <WorkToBuild>100</WorkToBuild>
+      <Mass>1</Mass>
+      <Beauty>1</Beauty>
+    </statBases>
+    <costList>
+      <WoodLog>8</WoodLog>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaCosmeticBase">
+    <defName>SaunaLocker</defName>
+    <label>locker</label>
+    <description>A small locker for storing belongings while using the spa. Pairs naturally with a towel rack and robe hook in a changing area. Purely decorative.</description>
+    <graphicData>
+      <texPath>Things/Item/Resource/Steel</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <drawSize>(0.8, 0.8)</drawSize>
+    </graphicData>
+    <fillPercent>0.3</fillPercent>
+    <pathCost>30</pathCost>
+    <statBases>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>0.5</Flammability>
+      <WorkToBuild>400</WorkToBuild>
+      <Mass>10</Mass>
+      <Beauty>2</Beauty>
+    </statBases>
+    <costList>
+      <WoodLog>25</WoodLog>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaCosmeticBase">
+    <defName>SaunaLoungeChair</defName>
+    <label>lounge chair</label>
+    <description>A comfortable chair for cooling down outside the sauna room itself.</description>
+    <graphicData>
+      <texPath>Things/Building/Furniture/DiningChair</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(1, 1)</drawSize>
+    </graphicData>
+    <fillPercent>0.35</fillPercent>
+    <pathCost>30</pathCost>
+    <defaultPlacingRot>South</defaultPlacingRot>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <statBases>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <WorkToBuild>500</WorkToBuild>
+      <Mass>6</Mass>
+      <Beauty>2</Beauty>
+      <Comfort>0.7</Comfort>
+    </statBases>
+    <costList>
+      <WoodLog>30</WoodLog>
+    </costList>
+    <building>
+      <isSittable>true</isSittable>
+    </building>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaCosmeticBase">
+    <defName>SaunaThermometer</defName>
+    <label>thermometer</label>
+    <description>A wall-mounted thermometer and sand-timer. Pure flavor — doesn't affect anything mechanically.</description>
+    <graphicData>
+      <texPath>Things/Building/Misc/TempControl/Heater</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.5, 0.5)</drawSize>
+    </graphicData>
+    <fillPercent>0.05</fillPercent>
+    <pathCost>14</pathCost>
+    <statBases>
+      <MaxHitPoints>40</MaxHitPoints>
+      <Flammability>0.5</Flammability>
+      <WorkToBuild>80</WorkToBuild>
+      <Mass>1</Mass>
+      <Beauty>1</Beauty>
+    </statBases>
+    <costList>
+      <WoodLog>5</WoodLog>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaCosmeticBase">
+    <defName>SaunaOutdoorCoolingBench</defName>
+    <label>outdoor cooling bench</label>
+    <description>A wood bench variant meant to sit outside the sauna room. Cosmetic, like the towel rack, but still sittable.</description>
+    <graphicData>
+      <texPath>Things/Building/Furniture/DiningChair</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(1, 1)</drawSize>
+    </graphicData>
+    <fillPercent>0.35</fillPercent>
+    <pathCost>30</pathCost>
+    <defaultPlacingRot>South</defaultPlacingRot>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <statBases>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <WorkToBuild>350</WorkToBuild>
+      <Mass>5</Mass>
+      <Beauty>1</Beauty>
+      <Comfort>0.6</Comfort>
+    </statBases>
+    <costList>
+      <WoodLog>20</WoodLog>
+    </costList>
+    <building>
+      <isSittable>true</isSittable>
+    </building>
+  </ThingDef>
+
+</Defs>

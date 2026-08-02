@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>Spa &amp; Sauna</name>
+  <author>johnbrimstone</author>
+  <packageId>johnbrimstone.spa</packageId>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+      <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+    </li>
+  </modDependencies>
+  <loadAfter>
+    <li>brrainz.harmony</li>
+  </loadAfter>
+  <description>Adds buildable spa/sauna facilities with mood-boosting effects. Sauna is a room role (like Bedroom or Hospital) scored by heater + seating furniture; heater variant determines the buff archetype (Detoxified, Purified, Serenity, and more). v1 is standalone; a soft-dependency Hospitality integration (guest billing, staff role) is planned for a later release.</description>
+</ModMetaData>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- Flat mood bonuses (Phase 2) — no intensity scaling, so a single stage each. -->
+
+  <ThoughtDef>
+    <defName>Sauna_SaunaBondingMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_SaunaBonding</hediff>
+    <stages>
+      <li>
+        <label>sauna bonding</label>
+        <description>Sharing a sauna session with a fellow colonist was a nice bonding experience.</description>
+        <baseMoodEffect>4</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_FreshAirMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_FreshAir</hediff>
+    <stages>
+      <li>
+        <label>fresh air</label>
+        <description>The sauna left me feeling refreshed, like I'd gotten some fresh air.</description>
+        <baseMoodEffect>2</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>Sauna_EasedJointsMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Sauna_EasedJoints</hediff>
+    <stages>
+      <li>
+        <label>eased joints</label>
+        <description>The sauna heat did wonders for my aching joints.</description>
+        <baseMoodEffect>3</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

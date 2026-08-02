@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Shared shape: a decaying, non-bad Hediff granted only on full-session completion
+    (see JobDriver_UseSauna — interrupted sessions grant nothing, no partial buff).
+    Severity is set to the room's intensity multiplier (1.0 baseline, up to 1.5 with 3
+    max-value facilities linked — SaunaUtility.GetIntensityMultiplier).
+
+    Each concrete archetype def below repeats the SAME 100%-baseline statOffsets across
+    10 stages (one per actually-reachable severity value — see ThoughtDefs_Sauna.xml for
+    why exactly 10), all with multiplyStatChangesBySeverity, rather than one stage. This
+    isn't for the stat math — multiplyStatChangesBySeverity already scales correctly off
+    the live severity value no matter how many stages exist. It's because the paired
+    ThoughtDef's mood picks its own stage by mirroring this Hediff's CurStageIndex
+    (ThoughtWorker_Hediff), and CurStageIndex only advances if the Hediff itself actually
+    has multiple stages to advance through. A single-stage Hediff (what this used to be)
+    left CurStageIndex permanently at 0, so mood was silently stuck at its lowest value
+    regardless of actual intensity even though the stats scaled correctly — caught via
+    in-game testing, not something the game errors on.
+  -->
+  <HediffDef Name="SaunaBuffBase" Abstract="True">
+    <hediffClass>HediffWithComps</hediffClass>
+    <isBad>false</isBad>
+    <initialSeverity>1</initialSeverity>
+    <maxSeverity>1.5</maxSeverity>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <disappearsAfterTicks>30000~60000</disappearsAfterTicks>
+        <showRemainingTime>true</showRemainingTime>
+      </li>
+    </comps>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Serenity</defName>
+    <label>serenity</label>
+    <labelNoun>a sense of serenity</labelNoun>
+    <description>A lingering calm from relaxing in a meditation-brazier sauna. Reduces the chance of a mental break while it lasts.</description>
+    <stages>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.10</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.15</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.20</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.25</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.30</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.35</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.40</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.45</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MentalBreakThreshold>-0.10</MentalBreakThreshold></statOffsets><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Detoxified</defName>
+    <label>detoxified</label>
+    <labelNoun>a sense of being detoxified</labelNoun>
+    <description>A lingering cleansing feeling from a dry-heat sauna. Speeds up immunity gain, improves resistance to toxic buildup, and accelerates recovery from any existing addiction while it lasts.</description>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <disappearsAfterTicks>30000~60000</disappearsAfterTicks>
+        <showRemainingTime>true</showRemainingTime>
+      </li>
+      <!-- Addiction-recovery boost also scales with intensity (parent.Severity), same
+           as the statOffsets below — see HediffComp_DetoxifiedAddictionRecovery. -->
+      <li Class="SpaMod.HediffCompProperties_DetoxifiedAddictionRecovery">
+        <baseRecoveryBoostFactor>0.5</baseRecoveryBoostFactor>
+      </li>
+    </comps>
+    <stages>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.10</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.15</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.20</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.25</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.30</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.35</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.40</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.45</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><ToxicResistance>0.15</ToxicResistance></statOffsets><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Purified</defName>
+    <label>purified</label>
+    <labelNoun>a sense of being purified</labelNoun>
+    <description>A lingering purified feeling from a gentle low-heat sauna. Speeds up immunity gain and injury healing while it lasts.</description>
+    <stages>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.10</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.15</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.20</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.25</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.30</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.35</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.40</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.45</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><ImmunityGainSpeed>0.15</ImmunityGainSpeed><InjuryHealingFactor>0.15</InjuryHealingFactor></statOffsets><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Radiant</defName>
+    <label>radiant</label>
+    <labelNoun>a radiant glow</labelNoun>
+    <description>A lingering glow from a scenic, view-oriented sauna. Improves social impact, perceived beauty, negotiation ability, and (with Ideology) ideoligion conversion power while it lasts.</description>
+    <stages>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.10</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.15</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.20</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.25</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.30</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.35</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.40</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.45</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><SocialImpact>0.15</SocialImpact><PawnBeauty>3</PawnBeauty><NegotiationAbility>0.15</NegotiationAbility><ConversionPower MayRequire="Ludeon.RimWorld.Ideology">0.20</ConversionPower></statOffsets><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Rejuvenated</defName>
+    <label>rejuvenated</label>
+    <labelNoun>a sense of rejuvenation</labelNoun>
+    <description>A lingering rejuvenated feeling from a candlelit, aromatic sauna. Rest falls more slowly, lifespan improves, and (with Biotech) cancer risk drops while it lasts.</description>
+    <stages>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.10</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.15</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.20</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.25</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.30</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.35</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.40</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.45</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><RestFallRateFactor>-0.20</RestFallRateFactor><LifespanFactor>0.05</LifespanFactor><CancerRate MayRequire="Ludeon.RimWorld.Biotech">-0.20</CancerRate></statOffsets><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Invigorated</defName>
+    <label>invigorated</label>
+    <labelNoun>a sense of invigoration</labelNoun>
+    <description>A lingering energized feeling from a löyly steam-infusion sauna. Improves move speed and general work speed while it lasts.</description>
+    <stages>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.10</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.15</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.20</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.25</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.30</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.35</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.40</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.45</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MoveSpeed>0.05</MoveSpeed><WorkSpeedGlobal>0.10</WorkSpeedGlobal></statOffsets><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_Cleansed</defName>
+    <label>cleansed</label>
+    <labelNoun>a sense of being cleansed</labelNoun>
+    <description>A lingering cleansed feeling from a wet-steam banya/hammam sauna. Improves medical tend quality, surgery success chance, food poisoning resistance, and cleaning speed while it lasts.</description>
+    <stages>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.10</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.15</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.20</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.25</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.30</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.35</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.40</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.45</minSeverity></li>
+      <li><multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity><statOffsets><MedicalTendQuality>0.15</MedicalTendQuality><MedicalSurgerySuccessChance>0.10</MedicalSurgerySuccessChance><FoodPoisonChance>-0.15</FoodPoisonChance><CleaningSpeed>0.15</CleaningSpeed></statOffsets><minSeverity>1.50</minSeverity></li>
+    </stages>
+  </HediffDef>
+
+</Defs>

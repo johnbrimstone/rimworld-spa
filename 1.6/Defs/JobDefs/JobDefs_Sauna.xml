@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Split into 3 by JoyKindDef bucket (Phase 4) so RimWorld's variety-seeking joy AI
+    treats different sauna archetypes as different recreation types. All 3 share
+    JobDriver_UseSauna — the driver doesn't care which bucket it's driving, only the
+    joyKind (and therefore which heaters/JoyGiverDef feed into it) differs.
+  -->
+
+  <JobDef>
+    <defName>Sauna_UseHeater_Hydrotherapy</defName>
+    <driverClass>SpaMod.JobDriver_UseSauna</driverClass>
+    <reportString>relaxing in the sauna.</reportString>
+    <!-- 2500 ticks = 1 in-game hour; the minimum stay for the full buff (see JobDriver_UseSauna). -->
+    <joyDuration>2500</joyDuration>
+    <joyMaxParticipants>1</joyMaxParticipants>
+    <joyKind>Hydrotherapy</joyKind>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <neverShowWeapon>true</neverShowWeapon>
+  </JobDef>
+
+  <JobDef>
+    <defName>Sauna_UseHeater_Meditative</defName>
+    <driverClass>SpaMod.JobDriver_UseSauna</driverClass>
+    <reportString>relaxing in the sauna.</reportString>
+    <joyDuration>2500</joyDuration>
+    <joyMaxParticipants>1</joyMaxParticipants>
+    <joyKind>Meditative</joyKind>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <neverShowWeapon>true</neverShowWeapon>
+  </JobDef>
+
+  <JobDef>
+    <defName>Sauna_UseHeater_BathRelaxing</defName>
+    <driverClass>SpaMod.JobDriver_UseSauna</driverClass>
+    <reportString>relaxing in the sauna.</reportString>
+    <joyDuration>2500</joyDuration>
+    <joyMaxParticipants>1</joyMaxParticipants>
+    <joyKind>BathRelaxing</joyKind>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <neverShowWeapon>true</neverShowWeapon>
+  </JobDef>
+
+</Defs>

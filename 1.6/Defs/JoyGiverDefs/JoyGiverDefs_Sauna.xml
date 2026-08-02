@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Split into 3 by JoyKindDef bucket (Phase 4), matching JobDefs_Sauna.xml. Custom
+    giverClass on all 3: the joy source is any room scored as Sauna, not the heater
+    building specifically — see JoyGiver_Sauna for details.
+  -->
+
+  <JoyGiverDef>
+    <defName>Sauna_UseHeater_Hydrotherapy</defName>
+    <giverClass>SpaMod.JoyGiver_Sauna</giverClass>
+    <baseChance>2</baseChance>
+    <thingDefs>
+      <li>SaunaHeater_Detoxified_1x1</li>
+      <li>SaunaHeater_Purified_1x1</li>
+      <li>SaunaHeater_Invigorated_1x1</li>
+      <li>SaunaHeater_Cleansed_1x1</li>
+    </thingDefs>
+    <jobDef>Sauna_UseHeater_Hydrotherapy</jobDef>
+    <joyKind>Hydrotherapy</joyKind>
+  </JoyGiverDef>
+
+  <JoyGiverDef>
+    <defName>Sauna_UseHeater_Meditative</defName>
+    <giverClass>SpaMod.JoyGiver_Sauna</giverClass>
+    <baseChance>2</baseChance>
+    <thingDefs>
+      <li>SaunaHeater_Serenity_1x1</li>
+    </thingDefs>
+    <jobDef>Sauna_UseHeater_Meditative</jobDef>
+    <joyKind>Meditative</joyKind>
+  </JoyGiverDef>
+
+  <JoyGiverDef>
+    <defName>Sauna_UseHeater_BathRelaxing</defName>
+    <giverClass>SpaMod.JoyGiver_Sauna</giverClass>
+    <baseChance>2</baseChance>
+    <thingDefs>
+      <li>SaunaHeater_Radiant_1x1</li>
+      <li>SaunaHeater_Rejuvenated_1x1</li>
+    </thingDefs>
+    <jobDef>Sauna_UseHeater_BathRelaxing</jobDef>
+    <joyKind>BathRelaxing</joyKind>
+  </JoyGiverDef>
+
+</Defs>

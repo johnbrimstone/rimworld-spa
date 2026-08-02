@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Cold Plunge Tub: standalone building, not linked to any heater and not part of the
+    facility system (no CompFacility/CompSaunaFacility, doesn't count toward the 3-facility
+    cap). Meant to sit outside the sauna room, matching real-world spa layouts. Usable only
+    by pawns with a currently-active sauna buff Hediff — see JoyGiver_ColdPlungeTub /
+    JobDriver_UseColdPlungeTub for the hard gate.
+  -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>SaunaColdPlungeTub</defName>
+    <label>cold plunge tub</label>
+    <description>A tub of cold water for post-sauna contrast therapy. Only usable right after a sauna session — pawns need an active sauna buff to use it.</description>
+    <thingClass>SpaMod.Building_ColdPlungeTub</thingClass>
+    <category>Building</category>
+    <selectable>true</selectable>
+    <!-- Placeholder art (MultiAnalyzer's sprite/size) pending real textures — see spec's
+         Asset Pipeline section. -->
+    <graphicData>
+      <texPath>Things/Building/Misc/MultiAnalyzer</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2.46875</drawSize>
+    </graphicData>
+    <size>(2,2)</size>
+    <rotatable>false</rotatable>
+    <altitudeLayer>Building</altitudeLayer>
+    <!-- PassThroughOnly (not Impassable): the pawn needs to walk onto and stand on the
+         tub's own footprint ("go in the square"), not use it from an adjacent cell. -->
+    <passability>PassThroughOnly</passability>
+    <pathCost>30</pathCost>
+    <fillPercent>0.5</fillPercent>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <designationCategory>Furniture</designationCategory>
+    <statBases>
+      <Beauty>2</Beauty>
+      <MaxHitPoints>80</MaxHitPoints>
+      <Flammability>0</Flammability>
+      <WorkToBuild>500</WorkToBuild>
+      <Mass>12</Mass>
+    </statBases>
+    <costList>
+      <Steel>50</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Sauna_Research</li>
+    </researchPrerequisites>
+    <building>
+      <joyKind>Meditative</joyKind>
+    </building>
+  </ThingDef>
+
+  <JobDef>
+    <defName>Sauna_UseColdPlungeTub</defName>
+    <driverClass>SpaMod.JobDriver_UseColdPlungeTub</driverClass>
+    <reportString>plunging into cold water.</reportString>
+    <!-- ~10 minutes, independent of the sauna's own 1-hour session length. -->
+    <joyDuration>417</joyDuration>
+    <joyMaxParticipants>1</joyMaxParticipants>
+    <joyKind>Meditative</joyKind>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <neverShowWeapon>true</neverShowWeapon>
+  </JobDef>
+
+  <JoyGiverDef>
+    <defName>Sauna_UseColdPlungeTub</defName>
+    <giverClass>SpaMod.JoyGiver_ColdPlungeTub</giverClass>
+    <baseChance>2</baseChance>
+    <thingDefs>
+      <li>SaunaColdPlungeTub</li>
+    </thingDefs>
+    <jobDef>Sauna_UseColdPlungeTub</jobDef>
+    <joyKind>Meditative</joyKind>
+  </JoyGiverDef>
+
+  <!-- Fixed strength, not intensity-scaled (Resolved Decisions #19/#25/#28) — a single
+       stage, no multiplyStatChangesBySeverity needed. Still a decaying buff like every
+       other sauna Hediff, so it inherits SaunaBuffBase for the shared Disappears comp. -->
+  <HediffDef ParentName="SaunaBuffBase">
+    <defName>Sauna_ColdPlunge</defName>
+    <label>cold plunge</label>
+    <labelNoun>a cold plunge</labelNoun>
+    <description>A lingering effect from a cold plunge after the sauna. Improves cold tolerance and dulls felt pain while it lasts.</description>
+    <stages>
+      <li>
+        <painFactor>0.85</painFactor>
+        <statOffsets>
+          <ComfyTemperatureMin>8</ComfyTemperatureMin>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
+
+</Defs>

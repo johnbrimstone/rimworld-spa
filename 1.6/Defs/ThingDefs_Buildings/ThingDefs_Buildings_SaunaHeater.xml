@@ -1,0 +1,915 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Shared shape for every 1x1 heater variant. Only label/description and the
+    CompProperties_SaunaHeater archetype value differ per concrete def below.
+    comps are NOT inherited here — RimWorld's XML inheritance replaces list fields
+    wholesale rather than merging them, so each concrete def repeats its own <comps>
+    block (CompPowerTrader + CompFlickable + CompProperties_SaunaHeater) instead of
+    fighting that.
+
+    ParentName="BuildingBase" (matching SaunaColdPlungeTub's own pattern) was missing
+    here originally — without it this def fell back to ThingDef's raw C# default
+    tickerType (Never) instead of BuildingBase's Normal, so the heater's own CompTick()
+    silently never fired for ANY comp (heat pusher, power scaling, motes). Buff-granting
+    itself was unaffected since that runs on the pawn's job tick, not the heater's — see
+    JobDriver_UseSauna. Explicit <tickerType> below as well, belt-and-suspenders.
+  -->
+  <ThingDef Name="SaunaHeaterBase_1x1" ParentName="BuildingBase" Abstract="True">
+    <thingClass>SpaMod.Building_SaunaHeater</thingClass>
+    <category>Building</category>
+    <selectable>true</selectable>
+    <tickerType>Normal</tickerType>
+    <!-- Placeholder art reusing the vanilla heater sprite until real textures are made (see spec's Asset Pipeline section). -->
+    <graphicData>
+      <texPath>Things/Building/Misc/TempControl/Heater</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <pathCost>30</pathCost>
+    <fillPercent>0.5</fillPercent>
+    <rotatable>false</rotatable>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <designationCategory>Furniture</designationCategory>
+    <statBases>
+      <Beauty>4</Beauty>
+      <MaxHitPoints>150</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <WorkToBuild>1200</WorkToBuild>
+      <Mass>15</Mass>
+    </statBases>
+    <costList>
+      <Steel>100</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Sauna_Research</li>
+    </researchPrerequisites>
+    <!-- joyKind deliberately NOT set here — each concrete def below sets its own,
+         per the design spec's 3-bucket Recreation Type mapping (Phase 4). -->
+    <placeWorkers>
+      <li>PlaceWorker_ShowFacilitiesConnections</li>
+    </placeWorkers>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_1x1">
+    <defName>SaunaHeater_Serenity_1x1</defName>
+    <label>sauna heater (meditation brazier)</label>
+    <description>An electric brazier that heats a sauna room and fills it with the scent of incense, encouraging quiet reflection. Grants the Serenity buff to anyone who relaxes near it.</description>
+    <building>
+      <joyKind>Meditative</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <!-- Warm-toned light radius while active — spec: "CompGlower only... no animated
+           flicker texture for now." Uniform across archetypes, no per-theme variation. -->
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <!-- Psyfocus gain (Royalty DLC only, skipped entirely otherwise): only takes
+           effect once fully decorated — see FocusStrengthOffset_SaunaFullyDecorated.
+           "Minimal" focus type is Royalty's unrestricted category (no trait/backstory/
+           title requirement), matching the spec's "not limited to Serenity" framing. -->
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <!-- Thin incense-smoke fleck (spec's "match the theme" mote table). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <!-- Temperature gate (Room & Sauna Definition / Resolved Decision #30-31): actively
+           warms the room toward the archetype's expected range, capped at its top so it
+           doesn't overheat past it. A meditation brazier runs mild/cozy, not hot. -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>2.5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Serenity</archetype>
+        <heatTier>Small</heatTier>
+        <ratedRoomSize>12</ratedRoomSize>
+        <minGateTemperature>30</minGateTemperature>
+        <maxGateTemperature>40</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_1x1">
+    <defName>SaunaHeater_Detoxified_1x1</defName>
+    <label>sauna heater (dry heater)</label>
+    <description>An electric dry heater in the rustic wood-fired Finnish sauna tradition. Grants the Detoxified buff to anyone who relaxes near it.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <!-- Warm-toned light radius while active — spec: "CompGlower only... no animated
+           flicker texture for now." Uniform across archetypes, no per-theme variation. -->
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <!-- Psyfocus gain (Royalty DLC only, skipped entirely otherwise): only takes
+           effect once fully decorated — see FocusStrengthOffset_SaunaFullyDecorated.
+           "Minimal" focus type is Royalty's unrestricted category (no trait/backstory/
+           title requirement), matching the spec's "not limited to Serenity" framing. -->
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <!-- Temperature gate: dry Finnish-style heater runs hot. -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>2.5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Detoxified</archetype>
+        <heatTier>Small</heatTier>
+        <ratedRoomSize>12</ratedRoomSize>
+        <minGateTemperature>70</minGateTemperature>
+        <maxGateTemperature>90</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_1x1">
+    <defName>SaunaHeater_Purified_1x1</defName>
+    <label>sauna heater (low-heat heater)</label>
+    <description>An electric low-heat heater warming stone in the Laconium tradition — gentle, steady heat. Grants the Purified buff to anyone who relaxes near it.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <!-- Warm-toned light radius while active — spec: "CompGlower only... no animated
+           flicker texture for now." Uniform across archetypes, no per-theme variation. -->
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <!-- Psyfocus gain (Royalty DLC only, skipped entirely otherwise): only takes
+           effect once fully decorated — see FocusStrengthOffset_SaunaFullyDecorated.
+           "Minimal" focus type is Royalty's unrestricted category (no trait/backstory/
+           title requirement), matching the spec's "not limited to Serenity" framing. -->
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <!-- Gentle heat-shimmer fleck, no smoke/steam (spec's "match the theme" mote table). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <!-- Temperature gate: low-heat stone (Laconium-style) runs gentle/steady, not hot. -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>2.5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Purified</archetype>
+        <heatTier>Small</heatTier>
+        <ratedRoomSize>12</ratedRoomSize>
+        <minGateTemperature>40</minGateTemperature>
+        <maxGateTemperature>55</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_1x1">
+    <defName>SaunaHeater_Radiant_1x1</defName>
+    <label>sauna heater (view-oriented heater)</label>
+    <description>An electric heater meant to anchor a glass-walled, scenic sauna room. Grants the Radiant buff to anyone who relaxes near it.</description>
+    <building>
+      <joyKind>BathRelaxing</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <!-- Warm-toned light radius while active — spec: "CompGlower only... no animated
+           flicker texture for now." Uniform across archetypes, no per-theme variation. -->
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <!-- Psyfocus gain (Royalty DLC only, skipped entirely otherwise): only takes
+           effect once fully decorated — see FocusStrengthOffset_SaunaFullyDecorated.
+           "Minimal" focus type is Royalty's unrestricted category (no trait/backstory/
+           title requirement), matching the spec's "not limited to Serenity" framing. -->
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <!-- Light-glint fleck rather than heat/steam (spec's "match the theme" mote table). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <!-- Temperature gate: view-oriented glass-walled room, spa-comfortable rather than
+           extreme-heat. -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>2.5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Radiant</archetype>
+        <heatTier>Small</heatTier>
+        <ratedRoomSize>12</ratedRoomSize>
+        <minGateTemperature>30</minGateTemperature>
+        <maxGateTemperature>40</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_1x1">
+    <defName>SaunaHeater_Rejuvenated_1x1</defName>
+    <label>sauna heater (ambience heater)</label>
+    <description>An electric heater surrounded by candlelight and aromatic warmth. Grants the Rejuvenated buff to anyone who relaxes near it.</description>
+    <building>
+      <joyKind>BathRelaxing</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <!-- Warm-toned light radius while active — spec: "CompGlower only... no animated
+           flicker texture for now." Uniform across archetypes, no per-theme variation. -->
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <!-- Psyfocus gain (Royalty DLC only, skipped entirely otherwise): only takes
+           effect once fully decorated — see FocusStrengthOffset_SaunaFullyDecorated.
+           "Minimal" focus type is Royalty's unrestricted category (no trait/backstory/
+           title requirement), matching the spec's "not limited to Serenity" framing. -->
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <!-- Candlelit-glow fleck (spec's "match the theme" mote table). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <!-- Temperature gate: candlelit ambience room, warm but not extreme. -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>2.5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Rejuvenated</archetype>
+        <heatTier>Small</heatTier>
+        <ratedRoomSize>12</ratedRoomSize>
+        <minGateTemperature>32</minGateTemperature>
+        <maxGateTemperature>42</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_1x1">
+    <defName>SaunaHeater_Invigorated_1x1</defName>
+    <label>sauna heater (infusion heater)</label>
+    <description>An electric heater for löyly-style steam infusions. Grants the Invigorated buff to anyone who relaxes near it.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <!-- Warm-toned light radius while active — spec: "CompGlower only... no animated
+           flicker texture for now." Uniform across archetypes, no per-theme variation. -->
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <!-- Psyfocus gain (Royalty DLC only, skipped entirely otherwise): only takes
+           effect once fully decorated — see FocusStrengthOffset_SaunaFullyDecorated.
+           "Minimal" focus type is Royalty's unrestricted category (no trait/backstory/
+           title requirement), matching the spec's "not limited to Serenity" framing. -->
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <!-- Steam-puff fleck, same effect as the Cleansed steam heater (spec's "match
+           the theme" mote table). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <!-- Temperature gate: löyly-style steam infusion heater runs hot. -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>2.5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Invigorated</archetype>
+        <heatTier>Small</heatTier>
+        <ratedRoomSize>12</ratedRoomSize>
+        <minGateTemperature>70</minGateTemperature>
+        <maxGateTemperature>90</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_1x1">
+    <defName>SaunaHeater_Cleansed_1x1</defName>
+    <label>sauna heater (steam heater)</label>
+    <description>An electric steam heater in the banya/hammam wet-steam tradition. Grants the Cleansed buff to anyone who relaxes near it.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <!-- Warm-toned light radius while active — spec: "CompGlower only... no animated
+           flicker texture for now." Uniform across archetypes, no per-theme variation. -->
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <!-- Psyfocus gain (Royalty DLC only, skipped entirely otherwise): only takes
+           effect once fully decorated — see FocusStrengthOffset_SaunaFullyDecorated.
+           "Minimal" focus type is Royalty's unrestricted category (no trait/backstory/
+           title requirement), matching the spec's "not limited to Serenity" framing. -->
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <!-- Steam-puff fleck, same system vanilla's Steam Geyser uses (spec's "match
+           the theme" mote table). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <!-- Temperature gate: banya/hammam wet-steam heater runs hot, if slightly milder
+           than the dry/infusion styles above. -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>2.5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Cleansed</archetype>
+        <heatTier>Small</heatTier>
+        <ratedRoomSize>12</ratedRoomSize>
+        <minGateTemperature>45</minGateTemperature>
+        <maxGateTemperature>60</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!--
+    2x2 heater variants (Resolved Decisions #30-31): same 7 archetypes, larger footprint.
+    Differentiators vs. the 1x1 above: rated for a bigger room before power scaling
+    kicks in (25 tiles vs. 12), heats the room twice as fast (heatPerSecond 7 vs. 3.5),
+    and throws motes twice as often (CompSaunaHeaterMotes' existing heatTier check).
+    No capacity/intensity difference — see the Large-tier comment on SaunaHeatTier.
+  -->
+  <ThingDef Name="SaunaHeaterBase_2x2" ParentName="BuildingBase" Abstract="True">
+    <thingClass>SpaMod.Building_SaunaHeater</thingClass>
+    <category>Building</category>
+    <selectable>true</selectable>
+    <tickerType>Normal</tickerType>
+    <!-- Placeholder art reusing the vanilla heater sprite until real textures are made (see spec's Asset Pipeline section). -->
+    <graphicData>
+      <texPath>Things/Building/Misc/TempControl/Heater</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2</drawSize>
+    </graphicData>
+    <size>(2,2)</size>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <pathCost>30</pathCost>
+    <fillPercent>0.5</fillPercent>
+    <rotatable>false</rotatable>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <designationCategory>Furniture</designationCategory>
+    <statBases>
+      <Beauty>8</Beauty>
+      <MaxHitPoints>250</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <WorkToBuild>2000</WorkToBuild>
+      <Mass>30</Mass>
+    </statBases>
+    <costList>
+      <Steel>250</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Sauna_Research</li>
+    </researchPrerequisites>
+    <placeWorkers>
+      <li>PlaceWorker_ShowFacilitiesConnections</li>
+    </placeWorkers>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_2x2">
+    <defName>SaunaHeater_Serenity_2x2</defName>
+    <label>large sauna heater (meditation brazier)</label>
+    <description>A larger electric brazier that heats a sauna room and fills it with the scent of incense, encouraging quiet reflection. Grants the Serenity buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <building>
+      <joyKind>Meditative</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Serenity</archetype>
+        <heatTier>Large</heatTier>
+        <ratedRoomSize>25</ratedRoomSize>
+        <minGateTemperature>30</minGateTemperature>
+        <maxGateTemperature>40</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_2x2">
+    <defName>SaunaHeater_Detoxified_2x2</defName>
+    <label>large sauna heater (dry heater)</label>
+    <description>A larger electric dry heater in the rustic wood-fired Finnish sauna tradition. Grants the Detoxified buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Detoxified</archetype>
+        <heatTier>Large</heatTier>
+        <ratedRoomSize>25</ratedRoomSize>
+        <minGateTemperature>70</minGateTemperature>
+        <maxGateTemperature>90</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_2x2">
+    <defName>SaunaHeater_Purified_2x2</defName>
+    <label>large sauna heater (low-heat heater)</label>
+    <description>A larger electric low-heat heater warming stone in the Laconium tradition — gentle, steady heat. Grants the Purified buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Purified</archetype>
+        <heatTier>Large</heatTier>
+        <ratedRoomSize>25</ratedRoomSize>
+        <minGateTemperature>40</minGateTemperature>
+        <maxGateTemperature>55</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_2x2">
+    <defName>SaunaHeater_Radiant_2x2</defName>
+    <label>large sauna heater (view-oriented heater)</label>
+    <description>A larger electric heater meant to anchor a glass-walled, scenic sauna room. Grants the Radiant buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <building>
+      <joyKind>BathRelaxing</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Radiant</archetype>
+        <heatTier>Large</heatTier>
+        <ratedRoomSize>25</ratedRoomSize>
+        <minGateTemperature>30</minGateTemperature>
+        <maxGateTemperature>40</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_2x2">
+    <defName>SaunaHeater_Rejuvenated_2x2</defName>
+    <label>large sauna heater (ambience heater)</label>
+    <description>A larger electric heater surrounded by candlelight and aromatic warmth. Grants the Rejuvenated buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <building>
+      <joyKind>BathRelaxing</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Rejuvenated</archetype>
+        <heatTier>Large</heatTier>
+        <ratedRoomSize>25</ratedRoomSize>
+        <minGateTemperature>32</minGateTemperature>
+        <maxGateTemperature>42</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_2x2">
+    <defName>SaunaHeater_Invigorated_2x2</defName>
+    <label>large sauna heater (infusion heater)</label>
+    <description>A larger electric heater for löyly-style steam infusions. Grants the Invigorated buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Invigorated</archetype>
+        <heatTier>Large</heatTier>
+        <ratedRoomSize>25</ratedRoomSize>
+        <minGateTemperature>70</minGateTemperature>
+        <maxGateTemperature>90</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="SaunaHeaterBase_2x2">
+    <defName>SaunaHeater_Cleansed_2x2</defName>
+    <label>large sauna heater (steam heater)</label>
+    <description>A larger electric steam heater in the banya/hammam wet-steam tradition. Grants the Cleansed buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <building>
+      <joyKind>Hydrotherapy</joyKind>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Glower">
+        <glowRadius>7</glowRadius>
+        <glowColor>(255, 180, 120, 0)</glowColor>
+      </li>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>SaunaSingingBowl</li>
+          <li>SaunaCandleRack</li>
+          <li>SaunaPrayerCandleBundle</li>
+          <li>SaunaMoodyGlowlight</li>
+          <li>SaunaHerbBasket</li>
+          <li>SaunaWaterfall</li>
+          <li>SaunaHeatedStonePile</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus" MayRequire="Ludeon.RimWorld.Royalty">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Minimal</li>
+        </focusTypes>
+        <offsets>
+          <li Class="SpaMod.FocusStrengthOffset_SaunaFullyDecorated">
+            <offset>0.25</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeaterMotes" />
+      <li Class="SpaMod.CompProperties_SaunaHeaterClimateControl">
+        <heatRatePerInterval>5</heatRatePerInterval>
+      </li>
+      <li Class="SpaMod.CompProperties_SaunaHeater">
+        <archetype>Cleansed</archetype>
+        <heatTier>Large</heatTier>
+        <ratedRoomSize>25</ratedRoomSize>
+        <minGateTemperature>45</minGateTemperature>
+        <maxGateTemperature>60</maxGateTemperature>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>
