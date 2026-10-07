@@ -39,7 +39,8 @@ Fixed 2026-10-07. The build passes, but none of these fixes have been tested in 
 - [x] **Rooms with more than one heater used an arbitrary heater.** The buff now comes from the job's target heater. It only falls back to any heater in the room if the target is gone.
 
 - [x] **Intensity wasn't clamped.** `GetIntensityMultiplier` now clamps at `MaxIntensityMultiplier` (1.5). Before, 3 herb baskets reached 1.6. The comment in `ThoughtDefs_Sauna.xml` is corrected.
-- [x] **Two heaters in one room fought over temperature.** All powered sauna heaters in a room now stop heating at the lowest `maxGateTemperature` among them (`SaunaUtility.GetRoomHeatingCeiling`). Mixed rooms settle where the ranges overlap. The inspect panel says when another heater is capping this one, and switching a heater off removes its cap.
+- [x] **Two heaters in one room fought over temperature.** All powered sauna heaters in a room now stop heating at the lowest `maxGateTemperature` among them (`SaunaUtility.GetRoomHeatingCeiling`).
+- [x] **Mixed heater types in one room are now blocked.** Placement is refused with a red ghost, a reason at the cursor and the conflicting heater outlined. A room that becomes mixed anyway (merged rooms) isn't a sauna. It shows a pulsing red ✕ over each heater involved, raises a "Mixed sauna heaters" alert, and explains the problem in the inspect panel and the right-click menu. See DESIGN.md §1.
 
 In-game test checklist for the fixes:
 
@@ -48,7 +49,12 @@ In-game test checklist for the fixes:
 - [ ] The herb basket's fuel drains.
 - [ ] Facilities and cosmetics still render.
 - [ ] Cold Plunge shows −8 °C on the minimum comfortable temperature.
-- [ ] In a Serenity + Detoxified room, heating stops at 40 °C, and the Detoxified heater's inspect panel shows the "capped" line. Switch the Serenity heater off and the room heats toward 90 °C.
+- [ ] Mixed heater types:
+  - Placing a Detoxified heater in a Serenity sauna is refused: red ghost, reason at the cursor, Serenity heater outlined in red. The same happens with a Serenity *blueprint*. A 2x2 Serenity is still allowed.
+  - Removing the wall between a Serenity sauna and a Detoxified sauna makes both heaters show a pulsing ✕ within about 2 seconds. The "Mixed sauna heaters" alert appears, and the room loses its sauna role.
+  - Rebuilding the wall clears all of the above.
+  - While the room is mixed, heating stops at 40 °C.
+  - Reload a save with a mixed room: the ✕ comes back.
 
 ## Cleanup
 
@@ -74,7 +80,7 @@ In-game test checklist for the fixes:
 - [ ] Decide what to do with the unused art: `SaunaEncens.png` (incense), `SaunaSmallCrystal.png`, `SaunaIceBarrel.png`. They could become new facilities, or replace art for existing items.
 - [ ] Herb basket: when empty, stop counting toward linked facilities (custom active check).
 - [ ] Waterfall: add a PlaceWorker that requires a stone floor (from the spec).
-- [ ] Localization: move hardcoded English strings into `Languages/English/Keyed/`. These include the float menu labels, the inspect string and the focus explanation.
+- [ ] Localization: move hardcoded English strings into `Languages/English/Keyed/`. These include the float menu labels, the inspect string, the focus explanation, and the mixed-heater placement reason, alert and inspect text.
 - [ ] Balance pass in game:
   - Heatstroke exposure at 70–90 °C (Detoxified and Invigorated)
   - Invigorated's `MoveSpeed +0.05` is an absolute offset, about +1%. Is that intended?

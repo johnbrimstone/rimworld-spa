@@ -8,9 +8,20 @@ A room gets the `Sauna` role (`RoomRoleWorker_Sauna`, score 10000) when it:
 
 - contains or touches at least one building with `CompSaunaHeater`,
 - contains or touches at least one sittable building (`building.isSittable`),
-- doesn't touch the map edge and isn't a doorway.
+- doesn't touch the map edge and isn't a doorway,
+- has heaters of **only one archetype**. A 1x1 and a 2x2 of the same archetype can share a room.
 
 Temperature and decor do **not** affect the role. They only gate or scale the buff when a session ends.
+
+### One heater type per room
+
+This rule is enforced in three layers (`SaunaMixedHeaters.cs`), so the player always sees why:
+
+1. **Placement is refused** (`PlaceWorker_SaunaNoMixedHeaters`). Placing a heater in an enclosed room that already has a heater, blueprint or frame of another archetype turns the ghost red. The cursor shows "Only one sauna heater type per room: this room already has a Detoxified heater", and each conflicting heater gets a red outline and a red line from the ghost. Unenclosed areas, such as before the walls are up, aren't checked.
+2. **A pulsing red ✕ appears over every heater involved** if a room becomes mixed anyway, for example when a wall is removed and two saunas merge (`MapComponent_SaunaMixedHeaters`). Each heater re-checks every 120 ticks.
+3. **An alert, "Mixed sauna heaters"** (`Alert_SaunaMixedHeaters`, high priority), lists those heaters, and clicking it jumps to them. The heater's inspect panel names the clashing types, and the right-click option shows as a disabled "Use sauna (mixed heater types in this room)".
+
+The consequence: a mixed room isn't a Sauna, so no sessions start there and none pay out.
 
 ## 2. Session flow
 
@@ -39,7 +50,7 @@ All heaters are electric, need the `Sauna_Research` project, and come in two siz
 
 Every tile above the rated size adds 5% to the power draw. The heater pushes heat scaled by `room.CellCount`, so large rooms still warm up at the same rate (`CompSaunaHeaterClimateControl`).
 
-It stops pushing once the room reaches the **room heating ceiling**: the lowest `maxGateTemperature` among all powered sauna heaters in the room (`SaunaUtility.GetRoomHeatingCeiling`). In a room with mixed archetypes, the temperature settles where their ranges overlap. If the ranges don't overlap (Serenity + Detoxified, for example), the hotter heater's buff can't be earned until the cooler heater is switched off. The inspect panel shows when another heater is capping this one.
+It stops pushing once the room reaches the **room heating ceiling**: the lowest `maxGateTemperature` among all powered sauna heaters in the room (`SaunaUtility.GetRoomHeatingCeiling`). For a valid sauna (one archetype) this is just the heater's own maximum. It only matters while a merged room is mixed (see §1): there it stops the hotter heater from cooking the room until the player fixes it.
 
 | Archetype | Heater flavor | JoyKind | Gate °C | Buff at 100% intensity | Effect |
 |---|---|---|---|---|---|
@@ -126,7 +137,8 @@ Psyfocus can come from two places:
 | `CompSaunaHeaterMotes.cs` | Per-archetype flecks |
 | `CompSaunaHeaterGlowOverlay.cs` | Pulsing ember overlay on powered 1x1 heaters |
 | `CompSaunaFacility.cs` | `facilityBonus` |
-| `RoomRoleWorker_Sauna.cs` | Room role scoring |
+| `RoomRoleWorker_Sauna.cs` | Room role scoring (rejects mixed rooms) |
+| `SaunaMixedHeaters.cs` | One-type-per-room rule: placement check, ✕ overlay, alert |
 | `JoyGiver_Sauna.cs` / `JobDriver_UseSauna.cs` | Sauna session AI and job, buff application |
 | `Building_SaunaHeater.cs` | "Use sauna" float menu |
 | `JoyGiver_ColdPlungeTub.cs` / `JobDriver_UseColdPlungeTub.cs` / `Building_ColdPlungeTub.cs` | Cold plunge |

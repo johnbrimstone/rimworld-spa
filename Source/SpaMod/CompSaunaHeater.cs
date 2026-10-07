@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Verse;
 
 namespace SpaMod
@@ -54,7 +55,21 @@ namespace SpaMod
     // no new C# comp needed per variant.
     public class CompSaunaHeater : ThingComp
     {
+        // How often the one-heater-type-per-room check re-runs (~2 s at 1x speed). Rooms
+        // only become mixed through wall changes, so this needn't be instant; it also
+        // covers save load, where rooms aren't built yet when comps spawn.
+        private const int MixedRoomCheckIntervalTicks = 120;
+
+        // Archetypes of the other heater types sharing this heater's room, or null if
+        // the room isn't mixed. Drives the warning overlay, the alert, the inspect
+        // string, and the disabled "Use sauna" option — see SaunaMixedHeaters.cs.
+        private List<SaunaArchetype> mixedWith;
+
+        private static readonly List<Thing> conflictsBuffer = new List<Thing>();
+
         public CompProperties_SaunaHeater Props => (CompProperties_SaunaHeater)props;
+
+        public bool InMixedRoom => mixedWith != null;
 
         // Resolved Decision #31 / "Room & Sauna Definition" temperature gate: is this
         // room currently within the heater variant's expected range? Room may be null
@@ -70,6 +85,50 @@ namespace SpaMod
             return temperature >= Props.minGateTemperature && temperature <= Props.maxGateTemperature;
         }
 
+        public override void CompTick()
+        {
+            base.CompTick();
+
+            if (parent.Spawned && parent.IsHashIntervalTick(MixedRoomCheckIntervalTicks))
+            {
+                CheckMixedRoom();
+            }
+        }
+
+        public override void PostDeSpawn(Map map, DestroyMode mode = DestroyMode.Vanish)
+        {
+            base.PostDeSpawn(map, mode);
+            mixedWith = null;
+            map.GetComponent<MapComponent_SaunaMixedHeaters>()?.SetFlagged(parent, false);
+        }
+
+        // Built heaters only (includePlanned: false): a blueprint can't actually mix the
+        // room until it's built, and placement already refuses conflicting blueprints.
+        private void CheckMixedRoom()
+        {
+            SaunaUtility.FindConflictingHeaters(parent.GetRoom(), Props.archetype, includePlanned: false,
+                conflictsBuffer, parent);
+
+            if (conflictsBuffer.Count == 0)
+            {
+                mixedWith = null;
+            }
+            else
+            {
+                mixedWith = new List<SaunaArchetype>();
+                foreach (Thing conflict in conflictsBuffer)
+                {
+                    SaunaArchetype other = conflict.TryGetComp<CompSaunaHeater>().Props.archetype;
+                    if (!mixedWith.Contains(other))
+                    {
+                        mixedWith.Add(other);
+                    }
+                }
+            }
+
+            parent.Map.GetComponent<MapComponent_SaunaMixedHeaters>()?.SetFlagged(parent, InMixedRoom);
+        }
+
         public override string CompInspectStringExtra()
         {
             int max = SaunaUtility.MaxCountedFacilities;
@@ -82,13 +141,11 @@ namespace SpaMod
                 + " ~ " + Props.maxGateTemperature.ToStringTemperature("F0")
                 + (IsRoomTemperatureInRange(room) ? " (in range)" : " (out of range)");
 
-            // Explains why a room never reaches this heater's range when another, cooler
-            // archetype's heater shares it (see SaunaUtility.GetRoomHeatingCeiling).
-            float? ceiling = SaunaUtility.GetRoomHeatingCeiling(room);
-            if (ceiling != null && ceiling.Value < Props.maxGateTemperature)
+            if (InMixedRoom)
             {
-                tempLine += "\nRoom heating capped at " + ceiling.Value.ToStringTemperature("F0")
-                    + " by another active sauna heater";
+                return "Mixed heater types in this room (" + Props.archetype + " + "
+                    + string.Join(", ", mixedWith) + ") — not a sauna until only one type remains"
+                    + "\n" + facilityLine + "\n" + tempLine;
             }
 
             return facilityLine + "\n" + tempLine;

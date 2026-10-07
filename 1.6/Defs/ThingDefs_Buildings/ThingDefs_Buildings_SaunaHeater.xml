@@ -58,6 +58,9 @@
          per the design spec's 3-bucket Recreation Type mapping (Phase 4). -->
     <placeWorkers>
       <li>PlaceWorker_ShowFacilitiesConnections</li>
+      <!-- One heater type per room: refuses placement next to a different archetype's
+           heater/blueprint/frame and outlines the conflict (SaunaMixedHeaters.cs). -->
+      <li>SpaMod.PlaceWorker_SaunaNoMixedHeaters</li>
     </placeWorkers>
   </ThingDef>
 
@@ -573,6 +576,9 @@
     </researchPrerequisites>
     <placeWorkers>
       <li>PlaceWorker_ShowFacilitiesConnections</li>
+      <!-- One heater type per room: refuses placement next to a different archetype's
+           heater/blueprint/frame and outlines the conflict (SaunaMixedHeaters.cs). -->
+      <li>SpaMod.PlaceWorker_SaunaNoMixedHeaters</li>
     </placeWorkers>
   </ThingDef>
 

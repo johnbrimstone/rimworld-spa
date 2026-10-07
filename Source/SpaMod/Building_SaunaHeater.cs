@@ -20,6 +20,15 @@ namespace SpaMod
                 yield break;
             }
 
+            // Checked before the room role: a mixed room isn't a Sauna, and silently
+            // offering nothing would leave the player guessing why.
+            CompSaunaHeater comp = this.TryGetComp<CompSaunaHeater>();
+            if (comp != null && comp.InMixedRoom)
+            {
+                yield return new FloatMenuOption("Use sauna (mixed heater types in this room)", null);
+                yield break;
+            }
+
             Room room = this.GetRoom();
             if (room == null || room.Role != SaunaDefOf.Sauna)
             {
@@ -39,7 +48,6 @@ namespace SpaMod
                 yield break;
             }
 
-            CompSaunaHeater comp = this.TryGetComp<CompSaunaHeater>();
             JobDef jobDef = comp != null ? SaunaUtility.JobDefForArchetype(comp.Props.archetype) : null;
             if (jobDef == null)
             {

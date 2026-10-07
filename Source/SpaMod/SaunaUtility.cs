@@ -92,13 +92,108 @@ namespace SpaMod
             return intensity < MaxIntensityMultiplier ? intensity : MaxIntensityMultiplier;
         }
 
+        // Archetype of a sauna heater ThingDef, or null if it isn't one.
+        public static SaunaArchetype? HeaterArchetypeOf(ThingDef def)
+        {
+            return def?.GetCompProperties<CompProperties_SaunaHeater>()?.archetype;
+        }
+
+        // Archetype of a built heater — or, with includePlanned, of a heater's blueprint or
+        // frame (Blueprint/Frame defs point at the heater via entityDefToBuild, install
+        // blueprints included), so placement can't sneak a second type in while the first
+        // is still under construction.
+        public static SaunaArchetype? HeaterArchetypeOf(Thing thing, bool includePlanned)
+        {
+            CompSaunaHeater comp = thing.TryGetComp<CompSaunaHeater>();
+            if (comp != null)
+            {
+                return comp.Props.archetype;
+            }
+            if (includePlanned && (thing is Blueprint || thing is Frame))
+            {
+                return HeaterArchetypeOf(thing.def.entityDefToBuild as ThingDef);
+            }
+
+            return null;
+        }
+
+        // Same enclosure rule as RoomRoleWorker_Sauna. The one-heater-type rule is only
+        // enforced inside enclosed rooms: before walls are finished, a heater's "room" is
+        // the whole outdoors, and blocking on that would wrongly link unrelated saunas
+        // under construction elsewhere on the map.
+        public static bool IsEnclosedRoom(Room room)
+        {
+            return room != null && !room.TouchesMapEdge && !room.IsDoorway;
+        }
+
+        // One sauna heater type per room. Fills conflicts with every heater in the room
+        // whose archetype differs from the given one (1x1 and 2x2 of the same archetype
+        // are fine together). ignoreA/ignoreB are excluded — the thing being placed or
+        // reinstalled, for PlaceWorker_SaunaNoMixedHeaters.
+        public static void FindConflictingHeaters(Room room, SaunaArchetype archetype, bool includePlanned,
+            List<Thing> conflicts, Thing ignoreA = null, Thing ignoreB = null)
+        {
+            conflicts.Clear();
+            if (!IsEnclosedRoom(room))
+            {
+                return;
+            }
+
+            foreach (Thing thing in room.ContainedAndAdjacentThings)
+            {
+                if (thing == ignoreA || thing == ignoreB)
+                {
+                    continue;
+                }
+
+                SaunaArchetype? other = HeaterArchetypeOf(thing, includePlanned);
+                if (other != null && other.Value != archetype)
+                {
+                    conflicts.Add(thing);
+                }
+            }
+        }
+
+        // True if an enclosed room contains built sauna heaters of more than one archetype.
+        // Such a room is never scored as a Sauna (RoomRoleWorker_Sauna) — mixing is blocked
+        // at placement (PlaceWorker_SaunaNoMixedHeaters), so this only happens when walls
+        // change and two rooms merge.
+        public static bool HasMixedHeaters(Room room)
+        {
+            if (!IsEnclosedRoom(room))
+            {
+                return false;
+            }
+
+            SaunaArchetype? first = null;
+            foreach (Thing thing in room.ContainedAndAdjacentThings)
+            {
+                SaunaArchetype? archetype = HeaterArchetypeOf(thing, includePlanned: false);
+                if (archetype == null)
+                {
+                    continue;
+                }
+                if (first == null)
+                {
+                    first = archetype;
+                }
+                else if (first.Value != archetype.Value)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         // The temperature every sauna heater in this room stops actively heating at: the
-        // lowest maxGateTemperature among the room's powered sauna heaters. Without a
-        // shared ceiling, mixed archetypes fight — e.g. a Serenity heater (30-40C) stops
-        // at 40C while a Detoxified one (70-90C) keeps pushing to 90C, so the Serenity
-        // gate can never pass. With it, a mixed room settles where the ranges overlap
-        // (none, for Serenity + Detoxified — the inspect string says so), and switching a
-        // heater off removes its constraint. Returns null if no powered heater is found.
+        // lowest maxGateTemperature among the room's powered sauna heaters. Mixed heater
+        // types are blocked (see HasMixedHeaters), but a merged room can still briefly
+        // contain them until the player fixes it — without a shared ceiling the hotter
+        // heater would keep pushing toward its own maximum (e.g. a Detoxified heater
+        // taking a Serenity room to 90C) in the meantime. Same-archetype heaters share
+        // the same maximum, so this is a no-op for a valid sauna. Returns null if no
+        // powered heater is found.
         public static float? GetRoomHeatingCeiling(Room room)
         {
             if (room == null)
