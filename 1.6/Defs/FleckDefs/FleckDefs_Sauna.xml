@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Custom steam flecks for Cleansed's room-filling steam effect (Common/Textures/
+    steam1.png, steam2.png — real supplied art, previously unused; CompSaunaHeaterMotes
+    threw vanilla's built-in AirPuff/Smoke presets everywhere before this). Structure
+    copied from vanilla's own AirPuff/DustPuffLong FleckDefs (ParentName="FleckBase_Thrown",
+    same field set) — steam2 has much lower source alpha than steam1 (~27% vs ~75%,
+    confirmed by inspecting the PNGs), so it's used as a fainter/trailing variant rather
+    than an equal alternate.
+  -->
+  <FleckDef ParentName="FleckBase_Thrown">
+    <defName>Sauna_Steam1</defName>
+    <graphicData>
+      <texPath>steam1</texPath>
+      <renderInstanced>true</renderInstanced>
+    </graphicData>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.3</fadeInTime>
+    <solidTime>1.5</solidTime>
+    <fadeOutTime>2</fadeOutTime>
+  </FleckDef>
+
+  <FleckDef ParentName="FleckBase_Thrown">
+    <defName>Sauna_Steam2</defName>
+    <graphicData>
+      <texPath>steam2</texPath>
+      <renderInstanced>true</renderInstanced>
+    </graphicData>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.3</fadeInTime>
+    <solidTime>1.2</solidTime>
+    <fadeOutTime>1.8</fadeOutTime>
+  </FleckDef>
+
+</Defs>

@@ -21,9 +21,12 @@
     <category>Building</category>
     <selectable>true</selectable>
     <tickerType>Normal</tickerType>
-    <!-- Placeholder art reusing the vanilla heater sprite until real textures are made (see spec's Asset Pipeline section). -->
+    <!-- Real 1x1 heater art (Common/Textures/SaunaHeaterElectric.png), replacing the
+         vanilla-sprite placeholder. Shared across all 7 archetypes, same as before —
+         CompGlower's warm light and CompSaunaHeaterGlowOverlay's ember pulse (below)
+         are what differentiate "powered on" visually, not per-archetype texture art. -->
     <graphicData>
-      <texPath>Things/Building/Misc/TempControl/Heater</texPath>
+      <texPath>SaunaHeaterElectric</texPath>
       <graphicClass>Graphic_Single</graphicClass>
     </graphicData>
     <altitudeLayer>Building</altitudeLayer>
@@ -73,6 +76,9 @@
         <glowRadius>7</glowRadius>
         <glowColor>(255, 180, 120, 0)</glowColor>
       </li>
+      <!-- Pulsing ember overlay on the heating-element region, gated on power
+           (Common/Textures/Glow1.png + SaunaHeaterElectric_m.png). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterGlowOverlay" />
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
           <li>SaunaSingingBowl</li>
@@ -137,6 +143,9 @@
         <glowRadius>7</glowRadius>
         <glowColor>(255, 180, 120, 0)</glowColor>
       </li>
+      <!-- Pulsing ember overlay on the heating-element region, gated on power
+           (Common/Textures/Glow1.png + SaunaHeaterElectric_m.png). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterGlowOverlay" />
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
           <li>SaunaSingingBowl</li>
@@ -197,6 +206,9 @@
         <glowRadius>7</glowRadius>
         <glowColor>(255, 180, 120, 0)</glowColor>
       </li>
+      <!-- Pulsing ember overlay on the heating-element region, gated on power
+           (Common/Textures/Glow1.png + SaunaHeaterElectric_m.png). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterGlowOverlay" />
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
           <li>SaunaSingingBowl</li>
@@ -259,6 +271,9 @@
         <glowRadius>7</glowRadius>
         <glowColor>(255, 180, 120, 0)</glowColor>
       </li>
+      <!-- Pulsing ember overlay on the heating-element region, gated on power
+           (Common/Textures/Glow1.png + SaunaHeaterElectric_m.png). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterGlowOverlay" />
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
           <li>SaunaSingingBowl</li>
@@ -322,6 +337,9 @@
         <glowRadius>7</glowRadius>
         <glowColor>(255, 180, 120, 0)</glowColor>
       </li>
+      <!-- Pulsing ember overlay on the heating-element region, gated on power
+           (Common/Textures/Glow1.png + SaunaHeaterElectric_m.png). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterGlowOverlay" />
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
           <li>SaunaSingingBowl</li>
@@ -384,6 +402,9 @@
         <glowRadius>7</glowRadius>
         <glowColor>(255, 180, 120, 0)</glowColor>
       </li>
+      <!-- Pulsing ember overlay on the heating-element region, gated on power
+           (Common/Textures/Glow1.png + SaunaHeaterElectric_m.png). -->
+      <li Class="SpaMod.CompProperties_SaunaHeaterGlowOverlay" />
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
           <li>SaunaSingingBowl</li>
@@ -431,6 +452,17 @@
     <defName>SaunaHeater_Cleansed_1x1</defName>
     <label>sauna heater (steam heater)</label>
     <description>An electric steam heater in the banya/hammam wet-steam tradition. Grants the Cleansed buff to anyone who relaxes near it.</description>
+    <!-- Real art (Common/Textures/SaunaHeaterSteam1x1.png) — a wall-mounted tiled steam
+         panel, not the shared boxy-stove look every other 1x1 heater uses. The source
+         render is genuinely tall (content aspect ratio ~0.64 w/h, confirmed by measuring
+         its non-white bounding box, not eyeballed), so drawSize is overridden taller than
+         1x1 rather than squishing it square — matches vanilla's own convention for tall
+         furniture that visually extends above its footprint. -->
+    <graphicData>
+      <texPath>SaunaHeaterSteam1x1</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1, 1.53)</drawSize>
+    </graphicData>
     <building>
       <joyKind>Hydrotherapy</joyKind>
     </building>
@@ -447,6 +479,10 @@
         <glowRadius>7</glowRadius>
         <glowColor>(255, 180, 120, 0)</glowColor>
       </li>
+      <!-- No CompSaunaHeaterGlowOverlay here (unlike the other 6): that overlay is
+           positioned/sized for the old shared coil-window art (SaunaHeaterElectric.png)
+           and has no matching "glow" element on this tiled steam panel — would just float
+           a stray ember patch over a wall panel with no heating window to justify it. -->
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
           <li>SaunaSingingBowl</li>
@@ -539,6 +575,24 @@
     <defName>SaunaHeater_Serenity_2x2</defName>
     <label>large sauna heater (meditation brazier)</label>
     <description>A larger electric brazier that heats a sauna room and fills it with the scent of incense, encouraging quiet reflection. Grants the Serenity buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <!-- Real art (Common/Textures/SaunaHeater2x2_Purified.png), shared across all 2x2
+         heaters except Cleansed (which gets its own dedicated steam-bath-panel art, not
+         yet built). Plain Cutout shader, not CutoutComplex/masked — the whole sprite is
+         tinted by whatever Stony stuff it's built from, bricks and stones both, not just
+         the stones window (an earlier masked-stones-only version was superseded: John
+         wanted the brick frame to reflect the material too, and a uniform tint does that
+         more simply than a second mask region). Same multiply-based tint already proven
+         on SaunaBench — black outlines stay black, light/gray fill takes the material's
+         color. -->
+    <graphicData>
+      <texPath>SaunaHeater2x2_Purified</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2</drawSize>
+    </graphicData>
+    <stuffCategories>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>80</costStuffCount>
     <building>
       <joyKind>Meditative</joyKind>
     </building>
@@ -593,6 +647,16 @@
     <defName>SaunaHeater_Detoxified_2x2</defName>
     <label>large sauna heater (dry heater)</label>
     <description>A larger electric dry heater in the rustic wood-fired Finnish sauna tradition. Grants the Detoxified buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <!-- Shared 2x2 art — see the comment on SaunaHeater_Serenity_2x2. -->
+    <graphicData>
+      <texPath>SaunaHeater2x2_Purified</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2</drawSize>
+    </graphicData>
+    <stuffCategories>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>80</costStuffCount>
     <building>
       <joyKind>Hydrotherapy</joyKind>
     </building>
@@ -646,6 +710,16 @@
     <defName>SaunaHeater_Purified_2x2</defName>
     <label>large sauna heater (low-heat heater)</label>
     <description>A larger electric low-heat heater warming stone in the Laconium tradition — gentle, steady heat. Grants the Purified buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <!-- Shared 2x2 art — see the comment on SaunaHeater_Serenity_2x2. -->
+    <graphicData>
+      <texPath>SaunaHeater2x2_Purified</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2</drawSize>
+    </graphicData>
+    <stuffCategories>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>80</costStuffCount>
     <building>
       <joyKind>Hydrotherapy</joyKind>
     </building>
@@ -700,6 +774,16 @@
     <defName>SaunaHeater_Radiant_2x2</defName>
     <label>large sauna heater (view-oriented heater)</label>
     <description>A larger electric heater meant to anchor a glass-walled, scenic sauna room. Grants the Radiant buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <!-- Shared 2x2 art — see the comment on SaunaHeater_Serenity_2x2. -->
+    <graphicData>
+      <texPath>SaunaHeater2x2_Purified</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2</drawSize>
+    </graphicData>
+    <stuffCategories>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>80</costStuffCount>
     <building>
       <joyKind>BathRelaxing</joyKind>
     </building>
@@ -754,6 +838,16 @@
     <defName>SaunaHeater_Rejuvenated_2x2</defName>
     <label>large sauna heater (ambience heater)</label>
     <description>A larger electric heater surrounded by candlelight and aromatic warmth. Grants the Rejuvenated buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <!-- Shared 2x2 art — see the comment on SaunaHeater_Serenity_2x2. -->
+    <graphicData>
+      <texPath>SaunaHeater2x2_Purified</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2</drawSize>
+    </graphicData>
+    <stuffCategories>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>80</costStuffCount>
     <building>
       <joyKind>BathRelaxing</joyKind>
     </building>
@@ -808,6 +902,16 @@
     <defName>SaunaHeater_Invigorated_2x2</defName>
     <label>large sauna heater (infusion heater)</label>
     <description>A larger electric heater for löyly-style steam infusions. Grants the Invigorated buff to anyone who relaxes near it. Rated for a bigger room and heats it faster than the 1x1 variant.</description>
+    <!-- Shared 2x2 art — see the comment on SaunaHeater_Serenity_2x2. -->
+    <graphicData>
+      <texPath>SaunaHeater2x2_Purified</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>2</drawSize>
+    </graphicData>
+    <stuffCategories>
+      <li>Stony</li>
+    </stuffCategories>
+    <costStuffCount>80</costStuffCount>
     <building>
       <joyKind>Hydrotherapy</joyKind>
     </building>

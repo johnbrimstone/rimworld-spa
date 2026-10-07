@@ -1,25 +1,64 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-  <ThingDef>
+  <ThingDef ParentName="BuildingBase">
     <defName>SaunaBench</defName>
     <label>sauna bench</label>
-    <description>A simple wooden bench for sitting in a sauna room.</description>
+    <description>A simple modular bench for sitting in a sauna room, built from wood or stone. Segments visually join into a continuous row when placed adjacent to each other.</description>
     <thingClass>Building</thingClass>
     <category>Building</category>
     <selectable>true</selectable>
-    <!-- Placeholder art reusing the vanilla dining chair sprite until real textures are made. -->
+    <!-- MadeFromStuff (costStuffCount, replacing the old flat costList) so the bench is
+         tinted by whatever material it's built from — confirmed via decompile:
+         Thing.DrawColor (reflecting the chosen Stuff's color) flows into
+         GraphicData.GraphicColoredFor -> Graphic.GetColoredVersion automatically for any
+         MadeFromStuff thing, no extra graphicData field needed. This also directly
+         explains the "all white" report: with a flat costList (not MadeFromStuff), the
+         atlas rendered with its literal, mostly-white source pixels and no tint at all. -->
+    <stuffCategories>
+      <li>Woody</li>
+      <li>Stony</li>
+    </stuffCategories>
+    <!-- ParentName="BuildingBase" was missing here — without it this fell back to raw
+         ThingDef's C# default drawerType (RealtimeOnly, confirmed via decompile) instead
+         of BuildingBase's MapMeshOnly. Graphic_Linked only computes its per-instance
+         neighbor bitmask through the batched Print()/MatSingleFor(thing) path used by
+         MapMeshOnly; RealtimeOnly renders through Graphic.DrawWorker's MatSingle, which
+         Graphic_Linked hardcodes to LinkDirections.None — so every bench silently rendered
+         the same "no connections" tile regardless of actual neighbors. Same bug class as
+         the heater's missing tickerType earlier in this project. Explicit <drawerType>
+         below too, belt-and-suspenders.
+
+         John's originally-supplied 4x4 atlas (Common/Textures/SaunaSeating.png), used as-is
+         (not the repacked version — see ArtSource/repacked_attempt_1/). linkFlags Custom1
+         is mod-defined so benches only link to each other, not vanilla walls/sandbags/etc.
+         graphicClass stays Graphic_Single — GraphicData auto-wraps it into Graphic_Linked
+         based on linkType (confirmed via decompile: GraphicUtility.WrapLinked). -->
+    <drawerType>MapMeshOnly</drawerType>
+    <!-- Required for any Linked graphicData (confirmed via decompile: Verse.GhostUtility.
+         GhostGraphicFor reads thingDef.uiIconPath, not the main texPath, specifically for
+         Linked things' placement-ghost preview and architect-menu button) — without this
+         it was null, and GraphicDatabase.Get<Graphic_Single>(null, ...) threw
+         ArgumentNullException("key") every time the "choose stuff" build menu tried to
+         render a preview. Cropped directly from John's original SaunaSeating.png (one
+         clean, unambiguous tile, no redrawing) — this only affects the small icon/ghost,
+         not the actual building's in-game texture. -->
+    <uiIconPath>SaunaBenchIcon</uiIconPath>
     <graphicData>
-      <texPath>Things/Building/Furniture/DiningChair</texPath>
-      <graphicClass>Graphic_Multi</graphicClass>
-      <drawSize>(1,1)</drawSize>
+      <texPath>SaunaSeating</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <linkType>Basic</linkType>
+      <linkFlags>
+        <li>Custom1</li>
+      </linkFlags>
     </graphicData>
     <altitudeLayer>Building</altitudeLayer>
     <passability>PassThroughOnly</passability>
     <pathCost>30</pathCost>
     <fillPercent>0.35</fillPercent>
-    <rotatable>true</rotatable>
-    <defaultPlacingRot>South</defaultPlacingRot>
+    <!-- Not player-rotatable: the linked-graphic atlas already renders every orientation
+         automatically based on which neighboring cells are also sauna benches. -->
+    <rotatable>false</rotatable>
     <socialPropernessMatters>true</socialPropernessMatters>
     <designationCategory>Furniture</designationCategory>
     <statBases>
@@ -30,9 +69,7 @@
       <Mass>5</Mass>
       <Comfort>0.8</Comfort>
     </statBases>
-    <costList>
-      <WoodLog>60</WoodLog>
-    </costList>
+    <costStuffCount>60</costStuffCount>
     <building>
       <isSittable>true</isSittable>
     </building>

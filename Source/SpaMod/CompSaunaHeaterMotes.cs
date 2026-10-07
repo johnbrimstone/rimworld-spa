@@ -24,6 +24,14 @@ namespace SpaMod
         // driving buff intensity).
         private const int BaseIntervalTicks = 250;
 
+        // Cleansed (steam bath) gets a much denser, room-filling effect instead of the
+        // single per-heater puff every other archetype uses — John asked for "a lot" of
+        // steam specifically for this archetype, not just a stronger puff at the heater's
+        // own tile. Uses the real supplied steam1.png/steam2.png art (Sauna_Steam1/2
+        // FleckDefs) instead of vanilla's AirPuff preset, previously unused in the mod.
+        private const int CleansedSteamIntervalTicks = 30;
+        private const int CleansedSteamPuffsPerInterval = 3;
+
         public override void CompTick()
         {
             base.CompTick();
@@ -45,15 +53,50 @@ namespace SpaMod
                 return;
             }
 
-            int interval = heaterComp.Props.heatTier == SaunaHeatTier.Large
-                ? BaseIntervalTicks / 2
-                : BaseIntervalTicks;
+            bool isLarge = heaterComp.Props.heatTier == SaunaHeatTier.Large;
+
+            if (heaterComp.Props.archetype == SaunaArchetype.Cleansed)
+            {
+                int steamInterval = isLarge ? CleansedSteamIntervalTicks / 2 : CleansedSteamIntervalTicks;
+                if (parent.IsHashIntervalTick(steamInterval))
+                {
+                    ThrowRoomFillingSteam();
+                }
+                return;
+            }
+
+            int interval = isLarge ? BaseIntervalTicks / 2 : BaseIntervalTicks;
             if (!parent.IsHashIntervalTick(interval))
             {
                 return;
             }
 
             ThrowThemedEffect(heaterComp.Props.archetype);
+        }
+
+        // Throws several steam puffs per call at random cells across the whole sauna
+        // room (not just the heater's own tile), so the room reads as genuinely misty
+        // rather than showing one puff source in a corner.
+        private void ThrowRoomFillingSteam()
+        {
+            Room room = parent.GetRoom();
+            Map map = parent.Map;
+            if (room == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < CleansedSteamPuffsPerInterval; i++)
+            {
+                Vector3 loc = room.Cells.RandomElement().ToVector3Shifted();
+                FleckDef fleckDef = Rand.Bool ? SaunaDefOf.Sauna_Steam1 : SaunaDefOf.Sauna_Steam2;
+
+                FleckCreationData data = FleckMaker.GetDataStatic(loc, map, fleckDef, Rand.Range(1.2f, 2f));
+                data.rotationRate = Rand.Range(-30f, 30f);
+                data.velocityAngle = Rand.Range(0f, 360f);
+                data.velocitySpeed = Rand.Range(0.05f, 0.15f);
+                map.flecks.CreateFleck(data);
+            }
         }
 
         private void ThrowThemedEffect(SaunaArchetype archetype)
@@ -63,10 +106,10 @@ namespace SpaMod
 
             switch (archetype)
             {
-                case SaunaArchetype.Cleansed:
                 case SaunaArchetype.Invigorated:
-                    // Steam heater / infusion steam-splash — same effect vanilla's
-                    // Steam Geyser uses.
+                    // Infusion steam-splash — same effect vanilla's Steam Geyser uses.
+                    // Cleansed (steam bath) has its own, much denser room-filling effect —
+                    // see ThrowRoomFillingSteam.
                     FleckMaker.ThrowAirPuffUp(loc, map);
                     break;
                 case SaunaArchetype.Serenity:

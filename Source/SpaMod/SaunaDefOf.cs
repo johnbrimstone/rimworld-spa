@@ -57,6 +57,12 @@ namespace SpaMod
 
         public static HediffDef Sauna_ColdPlunge;
 
+        // Custom steam flecks (Common/Textures/steam1.png/steam2.png) for Cleansed's
+        // room-filling steam effect — see CompSaunaHeaterMotes.
+        public static FleckDef Sauna_Steam1;
+
+        public static FleckDef Sauna_Steam2;
+
         static SaunaDefOf()
         {
             DefOfHelper.EnsureInitializedInCtor(typeof(SaunaDefOf));
