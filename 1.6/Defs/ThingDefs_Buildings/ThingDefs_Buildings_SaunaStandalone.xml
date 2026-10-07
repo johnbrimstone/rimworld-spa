@@ -84,8 +84,11 @@
     <stages>
       <li>
         <painFactor>0.85</painFactor>
+        <!-- Negative: lowering the minimum comfortable temperature is what improves
+             cold tolerance (same sign vanilla cold-weather apparel uses). +8 here
+             previously made pawns feel cold sooner. -->
         <statOffsets>
-          <ComfyTemperatureMin>8</ComfyTemperatureMin>
+          <ComfyTemperatureMin>-8</ComfyTemperatureMin>
         </statOffsets>
       </li>
     </stages>

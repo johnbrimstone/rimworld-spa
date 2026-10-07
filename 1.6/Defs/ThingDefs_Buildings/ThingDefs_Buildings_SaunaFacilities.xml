@@ -13,8 +13,13 @@
     since picking the top-3-by-value (not just first-3-linked) needs custom selection logic
     either way. Every heater ThingDef lists all of these in its CompProperties_AffectedByFacilities
     — bench/decor "theme" pairing per the design spec is cosmetic only, not enforced here.
+
+    ParentName="BuildingBase" for the same reasons as the heaters/bench: MapMeshOnly
+    drawing, rubble filth, repair effect, resource refund on destruction, sell factor.
+    No tickerType here — CompFacility only ticks for mustBePlacedFacingThingLinear, which
+    none of these use — so only SaunaHerbBasket (CompRefuelable) opts in to ticking.
   -->
-  <ThingDef Name="SaunaFacilityBase" Abstract="True">
+  <ThingDef Name="SaunaFacilityBase" ParentName="BuildingBase" Abstract="True">
     <thingClass>Building</thingClass>
     <category>Building</category>
     <selectable>true</selectable>
@@ -154,6 +159,10 @@
     <defName>SaunaHerbBasket</defName>
     <label>herb basket</label>
     <description>A basket of aromatic herbs, periodically replenished. A stronger bonus than static decor, but needs upkeep.</description>
+    <!-- CompRefuelable burns fuel in CompTick(); ThingDef's default tickerType is Never
+         (BuildingBase doesn't change it), so without this the basket never emptied and
+         the upkeep that justifies its higher facilityBonus didn't exist. -->
+    <tickerType>Normal</tickerType>
     <graphicData>
       <texPath>Things/Item/Resource/Medicine/MedicineHerbal</texPath>
       <graphicClass>Graphic_StackCount</graphicClass>

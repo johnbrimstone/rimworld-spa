@@ -9,18 +9,23 @@
     block (CompPowerTrader + CompFlickable + CompProperties_SaunaHeater) instead of
     fighting that.
 
-    ParentName="BuildingBase" (matching SaunaColdPlungeTub's own pattern) was missing
-    here originally — without it this def fell back to ThingDef's raw C# default
-    tickerType (Never) instead of BuildingBase's Normal, so the heater's own CompTick()
-    silently never fired for ANY comp (heat pusher, power scaling, motes). Buff-granting
-    itself was unaffected since that runs on the pawn's job tick, not the heater's — see
-    JobDriver_UseSauna. Explicit <tickerType> below as well, belt-and-suspenders.
+    tickerType must be set explicitly: ThingDef's C# default is Never and vanilla
+    BuildingBase doesn't override it (confirmed in Core's Buildings_Base.xml), so without
+    this the heater's own CompTick() silently never fires for ANY comp (climate control,
+    motes). Buff-granting itself is unaffected since that runs on the pawn's job tick, not
+    the heater's — see JobDriver_UseSauna.
   -->
   <ThingDef Name="SaunaHeaterBase_1x1" ParentName="BuildingBase" Abstract="True">
     <thingClass>SpaMod.Building_SaunaHeater</thingClass>
     <category>Building</category>
     <selectable>true</selectable>
     <tickerType>Normal</tickerType>
+    <!-- MapMeshAndRealTime, not BuildingBase's MapMeshOnly: CompSaunaHeaterGlowOverlay
+         draws in PostDraw(), which only runs via Thing.DynamicDrawPhase — skipped
+         entirely for MapMeshOnly (confirmed via decompile). The base sprite isn't drawn
+         twice: Thing.DrawAt only redraws the graphic for RealtimeOnly. Same setup vanilla
+         uses for buildings with CompFireOverlay. -->
+    <drawerType>MapMeshAndRealTime</drawerType>
     <!-- Real 1x1 heater art (Common/Textures/SaunaHeaterElectric.png), replacing the
          vanilla-sprite placeholder. Shared across all 7 archetypes, same as before —
          CompGlower's warm light and CompSaunaHeaterGlowOverlay's ember pulse (below)

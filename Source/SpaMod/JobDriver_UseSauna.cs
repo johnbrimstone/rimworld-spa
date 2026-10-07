@@ -6,9 +6,10 @@ using Verse.AI;
 namespace SpaMod
 {
     // Targets: A = seat to relax at (anywhere in the sauna room), B = a heater in that
-    // room (kept only for the JoyGainFactor stat and joyKind consistency check, not for
-    // positioning). The buff is determined by re-checking the room at completion, per the
-    // design spec, so it stays current if the player changes the room's heater/decor later.
+    // room (used for the JoyGainFactor stat, psyfocus, and which archetype's buff is
+    // granted — not for positioning). The rest of the buff (room role, temperature gate,
+    // decor intensity) is determined by re-checking the room at completion, per the
+    // design spec, so it stays current if the player changes the room's decor later.
     public class JobDriver_UseSauna : JobDriver
     {
         private Thing Seat => TargetThingA;
@@ -55,7 +56,7 @@ namespace SpaMod
             {
                 if (ticksLeftThisToil <= 0)
                 {
-                    ApplyRoomBuff(relax.actor);
+                    ApplyRoomBuff(relax.actor, Heater);
                 }
             });
             yield return relax;
@@ -72,7 +73,7 @@ namespace SpaMod
         // (or, for Vitality's painFactor, discrete stages — see HediffDefs_Sauna.xml) so
         // their 100%-baseline values scale continuously with this number. Everything here
         // only runs on a full, uninterrupted session (see the AddFinishAction above).
-        private static void ApplyRoomBuff(Pawn pawn)
+        private static void ApplyRoomBuff(Pawn pawn, Thing targetHeater)
         {
             Room room = pawn.GetRoom();
             if (room == null || room.Role != SaunaDefOf.Sauna)
@@ -80,7 +81,7 @@ namespace SpaMod
                 return;
             }
 
-            Thing heater = FindHeaterThing(room);
+            Thing heater = ResolveBuffHeater(targetHeater, room);
             CompSaunaHeater comp = heater?.TryGetComp<CompSaunaHeater>();
             if (comp == null)
             {
@@ -197,6 +198,25 @@ namespace SpaMod
                 return;
             }
             pawn.psychicEntropy?.GainPsyfocus_NewTemp(delta, heater);
+        }
+
+        // In a room with several heaters (possibly different archetypes), the buff must come
+        // from the heater this job actually targeted — the one whose JoyGiverDef/JobDef
+        // bucket picked it, and whose ThingDef the player right-clicked — not whichever
+        // heater ContainedAndAdjacentThings happens to list first. Falls back to any heater
+        // in the room only if the target was destroyed/moved out mid-session (e.g. walls
+        // rebuilt), so the room's current state still decides, per the design spec.
+        private static Thing ResolveBuffHeater(Thing targetHeater, Room room)
+        {
+            if (targetHeater != null
+                && targetHeater.Spawned
+                && targetHeater.GetRoom() == room
+                && targetHeater.TryGetComp<CompSaunaHeater>() != null)
+            {
+                return targetHeater;
+            }
+
+            return FindHeaterThing(room);
         }
 
         private static Thing FindHeaterThing(Room room)

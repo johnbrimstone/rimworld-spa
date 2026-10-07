@@ -8,9 +8,10 @@
     placement only, same as bench material/theme pairing elsewhere in this mod. No
     research requirement either: the Costs section lists researchPrerequisites for
     heaters explicitly but omits it for every item here, so these are available as soon
-    as the relevant resource is.
+    as the relevant resource is. ParentName="BuildingBase" for standard building behavior
+    (MapMeshOnly drawing, rubble, repair, resource refund); none of these need to tick.
   -->
-  <ThingDef Name="SaunaCosmeticBase" Abstract="True">
+  <ThingDef Name="SaunaCosmeticBase" ParentName="BuildingBase" Abstract="True">
     <thingClass>Building</thingClass>
     <category>Building</category>
     <selectable>true</selectable>

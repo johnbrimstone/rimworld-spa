@@ -4,7 +4,10 @@
   <!--
     Split into 3 by JoyKindDef bucket (Phase 4), matching JobDefs_Sauna.xml. Custom
     giverClass on all 3: the joy source is any room scored as Sauna, not the heater
-    building specifically — see JoyGiver_Sauna for details.
+    building specifically — see JoyGiver_Sauna for details. thingDefs must list BOTH
+    sizes of every archetype in the bucket: JoyGiver_Sauna only ever considers heaters
+    whose def is listed here, so a missing 2x2 entry left those heaters usable only via
+    the right-click order.
   -->
 
   <JoyGiverDef>
@@ -16,6 +19,10 @@
       <li>SaunaHeater_Purified_1x1</li>
       <li>SaunaHeater_Invigorated_1x1</li>
       <li>SaunaHeater_Cleansed_1x1</li>
+      <li>SaunaHeater_Detoxified_2x2</li>
+      <li>SaunaHeater_Purified_2x2</li>
+      <li>SaunaHeater_Invigorated_2x2</li>
+      <li>SaunaHeater_Cleansed_2x2</li>
     </thingDefs>
     <jobDef>Sauna_UseHeater_Hydrotherapy</jobDef>
     <joyKind>Hydrotherapy</joyKind>
@@ -27,6 +34,7 @@
     <baseChance>2</baseChance>
     <thingDefs>
       <li>SaunaHeater_Serenity_1x1</li>
+      <li>SaunaHeater_Serenity_2x2</li>
     </thingDefs>
     <jobDef>Sauna_UseHeater_Meditative</jobDef>
     <joyKind>Meditative</joyKind>
@@ -39,6 +47,8 @@
     <thingDefs>
       <li>SaunaHeater_Radiant_1x1</li>
       <li>SaunaHeater_Rejuvenated_1x1</li>
+      <li>SaunaHeater_Radiant_2x2</li>
+      <li>SaunaHeater_Rejuvenated_2x2</li>
     </thingDefs>
     <jobDef>Sauna_UseHeater_BathRelaxing</jobDef>
     <joyKind>BathRelaxing</joyKind>

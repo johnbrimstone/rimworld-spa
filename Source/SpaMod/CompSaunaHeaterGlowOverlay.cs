@@ -20,7 +20,11 @@ namespace SpaMod
     // the heater whenever it's powered, with a gentle pulsing scale for a "living embers"
     // feel. Same PostDraw-overlay technique vanilla uses for CompFireOverlay — power-gated
     // instead of fuel-gated, and a single static frame instead of Graphic_Flicker's
-    // multi-frame fire animation, since we only have one glow image.
+    // multi-frame fire animation, since we only have one glow image. Requires the heater
+    // def's drawerType to be MapMeshAndRealTime — PostDraw never runs for MapMeshOnly.
+    // [StaticConstructorOnStartup] (as on CompFireOverlay) so GlowGraphic's texture loads
+    // on the main thread during startup, not lazily on first draw.
+    [StaticConstructorOnStartup]
     public class CompSaunaHeaterGlowOverlay : ThingComp
     {
         private const float PulseSpeed = 2f;
