@@ -78,11 +78,57 @@ namespace SpaMod
             return total;
         }
 
+        // Matches every intensity-scaled HediffDef's maxSeverity (SaunaBuffBase) and the
+        // top Mood stage in ThoughtDefs_Sauna.xml.
+        public const float MaxIntensityMultiplier = 1.5f;
+
         // Room intensity as a multiplier on an archetype's 100%-baseline Mood/stat
-        // values: 1.0 (undecorated) up to 1.5 (3 max-value facilities linked).
+        // values: 1.0 (undecorated) up to 1.5. Clamped explicitly: duplicate high-value
+        // facilities (e.g. 3 herb baskets = 12 points) would otherwise reach 1.6, which
+        // only the Hediff's maxSeverity was silently absorbing.
         public static float GetIntensityMultiplier(Thing heater)
         {
-            return 1f + GetTopFacilityBonusPoints(heater) * IntensityPerBonusPoint;
+            float intensity = 1f + GetTopFacilityBonusPoints(heater) * IntensityPerBonusPoint;
+            return intensity < MaxIntensityMultiplier ? intensity : MaxIntensityMultiplier;
+        }
+
+        // The temperature every sauna heater in this room stops actively heating at: the
+        // lowest maxGateTemperature among the room's powered sauna heaters. Without a
+        // shared ceiling, mixed archetypes fight — e.g. a Serenity heater (30-40C) stops
+        // at 40C while a Detoxified one (70-90C) keeps pushing to 90C, so the Serenity
+        // gate can never pass. With it, a mixed room settles where the ranges overlap
+        // (none, for Serenity + Detoxified — the inspect string says so), and switching a
+        // heater off removes its constraint. Returns null if no powered heater is found.
+        public static float? GetRoomHeatingCeiling(Room room)
+        {
+            if (room == null)
+            {
+                return null;
+            }
+
+            float? ceiling = null;
+            foreach (Thing thing in room.ContainedAndAdjacentThings)
+            {
+                CompSaunaHeater heaterComp = thing.TryGetComp<CompSaunaHeater>();
+                if (heaterComp == null)
+                {
+                    continue;
+                }
+
+                CompPowerTrader power = thing.TryGetComp<CompPowerTrader>();
+                if (power != null && !power.PowerOn)
+                {
+                    continue;
+                }
+
+                float max = heaterComp.Props.maxGateTemperature;
+                if (ceiling == null || max < ceiling.Value)
+                {
+                    ceiling = max;
+                }
+            }
+
+            return ceiling;
         }
 
         // Closest sittable thing in the room that the pawn can reserve and reach.

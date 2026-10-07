@@ -115,8 +115,11 @@ namespace SpaMod
             // this comp otherwise replaced when heat-pushing was folded in here. Without
             // this the heater runs away indefinitely (reported: a 2x2 heater hit 200C in
             // a 26-tile room). Reusing maxGateTemperature means no new field is needed —
-            // it's already the exact ceiling the buff gate checks against.
-            if (room.Temperature >= heaterComp.Props.maxGateTemperature)
+            // it's already the exact ceiling the buff gate checks against. Shared across
+            // every powered heater in the room (lowest wins — see
+            // SaunaUtility.GetRoomHeatingCeiling) so mixed archetypes don't fight.
+            float ceiling = SaunaUtility.GetRoomHeatingCeiling(room) ?? heaterComp.Props.maxGateTemperature;
+            if (room.Temperature >= ceiling)
             {
                 return;
             }

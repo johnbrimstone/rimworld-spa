@@ -38,10 +38,8 @@ Fixed 2026-10-07. The build passes, but none of these fixes have been tested in 
 - [x] **Facilities and cosmetics didn't inherit `BuildingBase`.** Both now do. The herb basket also gets an explicit `tickerType Normal`, because `BuildingBase` doesn't set one, so its fuel actually drains now.
 - [x] **Rooms with more than one heater used an arbitrary heater.** The buff now comes from the job's target heater. It only falls back to any heater in the room if the target is gone.
 
-Still open:
-
-- [ ] **Intensity isn't clamped.** `GetIntensityMultiplier` can go above 1.5. For example, 3 herb baskets give 12 points, which is 1.6. The hediff's `maxSeverity` clamps it in practice. The comment in `ThoughtDefs_Sauna.xml` that says the "max reachable sum is 10" is wrong. Fix: clamp explicitly.
-- [ ] **Two heaters in one room can fight over temperature.** For example, a Serenity heater stops at 40 °C while a Detoxified heater keeps pushing to 90 °C. Decide whether to block mixed archetypes in one room.
+- [x] **Intensity wasn't clamped.** `GetIntensityMultiplier` now clamps at `MaxIntensityMultiplier` (1.5). Before, 3 herb baskets reached 1.6. The comment in `ThoughtDefs_Sauna.xml` is corrected.
+- [x] **Two heaters in one room fought over temperature.** All powered sauna heaters in a room now stop heating at the lowest `maxGateTemperature` among them (`SaunaUtility.GetRoomHeatingCeiling`). Mixed rooms settle where the ranges overlap. The inspect panel says when another heater is capping this one, and switching a heater off removes its cap.
 
 In-game test checklist for the fixes:
 
@@ -50,6 +48,7 @@ In-game test checklist for the fixes:
 - [ ] The herb basket's fuel drains.
 - [ ] Facilities and cosmetics still render.
 - [ ] Cold Plunge shows −8 °C on the minimum comfortable temperature.
+- [ ] In a Serenity + Detoxified room, heating stops at 40 °C, and the Detoxified heater's inspect panel shows the "capped" line. Switch the Serenity heater off and the room heats toward 90 °C.
 
 ## Cleanup
 

@@ -82,6 +82,15 @@ namespace SpaMod
                 + " ~ " + Props.maxGateTemperature.ToStringTemperature("F0")
                 + (IsRoomTemperatureInRange(room) ? " (in range)" : " (out of range)");
 
+            // Explains why a room never reaches this heater's range when another, cooler
+            // archetype's heater shares it (see SaunaUtility.GetRoomHeatingCeiling).
+            float? ceiling = SaunaUtility.GetRoomHeatingCeiling(room);
+            if (ceiling != null && ceiling.Value < Props.maxGateTemperature)
+            {
+                tempLine += "\nRoom heating capped at " + ceiling.Value.ToStringTemperature("F0")
+                    + " by another active sauna heater";
+            }
+
             return facilityLine + "\n" + tempLine;
         }
     }

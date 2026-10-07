@@ -37,7 +37,9 @@ All heaters are electric, need the `Sauna_Research` project, and come in two siz
 | Cost | 100 Steel | 250 Steel + 80 Stony stuff |
 | Mote frequency | every 250 ticks | every 125 ticks |
 
-Every tile above the rated size adds 5% to the power draw. The heater pushes heat scaled by `room.CellCount`, so large rooms still warm up at the same rate. It stops pushing once the room reaches `maxGateTemperature` (`CompSaunaHeaterClimateControl`).
+Every tile above the rated size adds 5% to the power draw. The heater pushes heat scaled by `room.CellCount`, so large rooms still warm up at the same rate (`CompSaunaHeaterClimateControl`).
+
+It stops pushing once the room reaches the **room heating ceiling**: the lowest `maxGateTemperature` among all powered sauna heaters in the room (`SaunaUtility.GetRoomHeatingCeiling`). In a room with mixed archetypes, the temperature settles where their ranges overlap. If the ranges don't overlap (Serenity + Detoxified, for example), the hotter heater's buff can't be earned until the cooler heater is switched off. The inspect panel shows when another heater is capping this one.
 
 | Archetype | Heater flavor | JoyKind | Gate °C | Buff at 100% intensity | Effect |
 |---|---|---|---|---|---|
@@ -64,8 +66,10 @@ The three JoyKinds (vanilla `Meditative` plus the custom `Hydrotherapy` and `Bat
 Decor uses vanilla's facility linking (`CompFacility` / `CompAffectedByFacilities`, default range 8). Each item also has a `CompSaunaFacility.facilityBonus`.
 
 ```
-intensity = 1 + 0.05 × (sum of the top 3 facilityBonus values among active linked facilities)
+intensity = min(1.5, 1 + 0.05 × (sum of the top 3 facilityBonus values among active linked facilities))
 ```
+
+If more than one heater is in the room, intensity and archetype come from the heater the session's job targeted.
 
 | Facility | Bonus | Cost | Notes |
 |---|---|---|---|

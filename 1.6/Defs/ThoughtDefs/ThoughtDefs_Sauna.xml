@@ -5,9 +5,10 @@
     ThoughtStage has no severity-multiplier field (unlike HediffStage's
     multiplyStatChangesBySeverity, used for the stat side in HediffDefs_Sauna.xml), so
     Mood scaling with intensity is done via discrete stages instead — one per actually
-    reachable severity value. Facility-bonus points sum to only 0,2,3,4,5,6,7,8,9,10
-    (facilityBonus values are 2/2/2/3/3/3/4, so a sum of exactly 1 is never reachable),
-    giving intensity multipliers of 1.00,1.10,1.15,1.20,1.25,1.30,1.35,1.40,1.45,1.50 and
+    reachable severity value. With facilityBonus values of 2/2/2/3/3/3/4 the top-3 sum
+    can be 0 or 2..12 (never exactly 1; 11-12 only with duplicate herb baskets), and
+    SaunaUtility.GetIntensityMultiplier clamps anything above 10 points to 1.5 — so the
+    reachable set is 0,2,3,4,5,6,7,8,9,10(+), giving intensity multipliers of 1.00,1.10,1.15,1.20,1.25,1.30,1.35,1.40,1.45,1.50 and
     mood = 6.0 * that multiplier = 6.0,6.6,6.9,7.2,7.5,7.8,8.1,8.4,8.7,9.0. Identical
     across all 7 archetypes since every archetype's base Mood is +6.
   -->
